@@ -23,6 +23,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void MoveForward(float DeltaTime);
+	void RotateToPlayer();
+
+	void Shoot(float DeltaTime);
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class AStandardEnemyProjectile> StandardEnemyProjectile_BP;
 
 private:
 	
@@ -30,5 +37,16 @@ private:
 
 	float MovementValue = 100.0f;
 
+	float SpawnBuffer = 30.0f;
+
+	float ShootRange = 700.0f;
+
+	float ShootTimer;
+
 	int Health = 5;
+
+	int EnemyMode = 1;
+
+	//EnemyMode 1: Chase and rotate towards player
+	//EnemyMode 2: Stand still and shoot towards player
 };

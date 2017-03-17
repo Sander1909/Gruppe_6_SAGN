@@ -20,6 +20,11 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	void SetProjectileLocation(float DeltaTime);
+
+private:
+
+	float Speed = 300.0f;
 	
-	
+	float TimeToDestroy;
 };

@@ -24,5 +24,19 @@ void AStandardEnemyProjectile::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	SetProjectileLocation(DeltaTime);
+
+	TimeToDestroy += DeltaTime;
+
+	if (TimeToDestroy > 40.0f)
+	{
+		Destroy();
+	}
 }
 
+void AStandardEnemyProjectile::SetProjectileLocation(float DeltaTime)
+{
+	FVector NewLocation = GetActorLocation() + GetActorForwardVector() * DeltaTime * Speed;
+
+	SetActorLocation(NewLocation);
+}
