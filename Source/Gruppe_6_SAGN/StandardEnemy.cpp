@@ -26,7 +26,7 @@ void AStandardEnemy::Tick( float DeltaTime )
 		RotateToPlayer();
 		break;
 	case 2:
-		Shoot(DeltaTime);
+		SpawnProjectile(DeltaTime);
 		RotateToPlayer();
 		break;
 	}
@@ -40,7 +40,7 @@ void AStandardEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AStandardEnemy::MoveForward(float DeltaTime)
 {
-	FVector ForwardVector = GetActorForwardVector() * Speed * DeltaTime;
+	FVector ForwardVector = GetActorForwardVector() * DeltaTime;
 
 	AddMovementInput(ForwardVector, MovementValue);
 }
@@ -61,7 +61,7 @@ void AStandardEnemy::RotateToPlayer()
 
 }
 
-void AStandardEnemy::Shoot(float DeltaTime)
+void AStandardEnemy::SpawnProjectile(float DeltaTime)
 {
 	UWorld * World;
 
