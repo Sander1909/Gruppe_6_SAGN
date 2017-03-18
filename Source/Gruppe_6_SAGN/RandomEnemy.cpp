@@ -2,6 +2,7 @@
 
 #include "Gruppe_6_SAGN.h"
 #include "RandomEnemy.h"
+#include "StandardEnemyProjectile.h"
 
 
 // Sets default values
@@ -16,6 +17,8 @@ ARandomEnemy::ARandomEnemy()
 void ARandomEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MyRotation = GetActorRotation();
 	
 }
 
@@ -26,6 +29,7 @@ void ARandomEnemy::Tick( float DeltaTime )
 
 	MoveForward(DeltaTime);
 	SetRandomRotation(DeltaTime);
+	SpawnProjectile(DeltaTime);
 
 }
 
@@ -57,5 +61,25 @@ void ARandomEnemy::SetRandomRotation(float DeltaTime)
 
 		RandomTimer = 0.0f;
 	}
+
+}
+
+void ARandomEnemy::SpawnProjectile(float DeltaTime)
+{
+	ProjectileDelay += DeltaTime;
+	
+	UWorld * World;
+	
+	World = GetWorld();
+
+	if (ProjectileDelay > 0.5f)
+	{
+		World->SpawnActor<AStandardEnemyProjectile>(StandardEnemyProjectile_BP, GetActorLocation(), MyRotation);
+		ProjectileDelay = 0.0f;	
+		
+		MyRotation.Yaw = MyRotation.Yaw + 3.0f;
+	}
+
+
 
 }

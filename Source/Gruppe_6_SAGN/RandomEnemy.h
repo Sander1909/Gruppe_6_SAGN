@@ -26,11 +26,20 @@ public:
 	void MoveForward(float DeltaTime);
 	void SetRandomRotation(float DeltaTime);
 
+	void SpawnProjectile(float DeltaTime);
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class AStandardEnemyProjectile> StandardEnemyProjectile_BP;
+
 private:
 
 	float MovementValue = 300.0f;
 	
 	float RandomTimer;
+
+	float ProjectileDelay;
+
+	FRotator MyRotation;
 
 	
 	
