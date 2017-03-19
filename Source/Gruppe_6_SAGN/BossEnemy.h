@@ -3,16 +3,16 @@
 #pragma once
 
 #include "GameFramework/Character.h"
-#include "PacmanEnemy.generated.h"
+#include "BossEnemy.generated.h"
 
 UCLASS()
-class GRUPPE_6_SAGN_API APacmanEnemy : public ACharacter
+class GRUPPE_6_SAGN_API ABossEnemy : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	APacmanEnemy();
+	ABossEnemy();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -23,37 +23,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void MoveUp();
-	void MoveDown();
-	void MoveLeft();
-	void MoveRight();
-
+	void MoveForward(float DeltaTime);
 	void RotateToPlayer();
-	void SpawnStaticProjectile(float DeltaTime);
 
-	UPROPERTY(EditAnywhere, Category = "Spawning")
-		TSubclassOf<class AStaticProjectile> StaticProjectile_BP;
-
-	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
 		UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult &SweepResult);
 
 
-
 private:
 
-	float MovementValue = 200.0f;
-
-	int MovementMode = 1;
-
-	float SwitchMode;
-
-	float SpawnTimer;
+	float MovementValue = 50.0f;
 	
-	int Mode1[2] = {3,4};
-	int Mode2[2] = {3,4};
-	int Mode3[2] = {1,2};
-	int Mode4[2] = {1,2};
 	
 };

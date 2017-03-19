@@ -37,7 +37,7 @@ void APacmanEnemy::Tick( float DeltaTime )
 
 		if (SwitchMode > 1.0f)
 		{
-			MovementMode = Mode1[rand() % 3];
+			MovementMode = Mode1[rand() % 2];
 			UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
 			SwitchMode = 0.0f;
 		}
@@ -51,7 +51,7 @@ void APacmanEnemy::Tick( float DeltaTime )
 
 		if (SwitchMode > 1.0f)
 		{
-			MovementMode = Mode2[rand() % 3];
+			MovementMode = Mode2[rand() % 2];
 			UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
 
 			SwitchMode = 0.0f;
@@ -63,7 +63,7 @@ void APacmanEnemy::Tick( float DeltaTime )
 
 		if (SwitchMode > 1.0f)
 		{
-			MovementMode = Mode3[rand() % 3];
+			MovementMode = Mode3[rand() % 2];
 			UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
 
 			SwitchMode = 0.0f;
@@ -75,7 +75,7 @@ void APacmanEnemy::Tick( float DeltaTime )
 
 		if (SwitchMode > 1.0f)
 		{
-			MovementMode = Mode4[rand() % 3];
+			MovementMode = Mode4[rand() % 2];
 			UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
 
 			SwitchMode = 0.0f;
@@ -146,10 +146,20 @@ void APacmanEnemy::SpawnStaticProjectile(float DeltaTime)
 
 	SpawnTimer += DeltaTime;
 
-	if (SpawnTimer > 0.8f)
+	if (SpawnTimer > 0.3f)
 	{
 		World->SpawnActor<AStaticProjectile>(StaticProjectile_BP, GetActorLocation(), FRotator::ZeroRotator);
 		SpawnTimer = 0.0f;
 	}
 
+}
+
+void APacmanEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult &SweepResult)
+{
+//	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
+//	{
+
+//	}
 }

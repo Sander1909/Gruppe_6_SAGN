@@ -79,7 +79,14 @@ void ARandomEnemy::SpawnProjectile(float DeltaTime)
 		
 		MyRotation.Yaw = MyRotation.Yaw + 3.0f;
 	}
+}
 
+void ARandomEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult &SweepResult)
+{
+	/*if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
+	{
 
-
+	} */
 }
