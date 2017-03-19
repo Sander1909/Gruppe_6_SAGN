@@ -17,6 +17,17 @@ void ABossEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABossEnemy::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BossEnemy no collision box"));
+
+	}
 }
 
 // Called every frame

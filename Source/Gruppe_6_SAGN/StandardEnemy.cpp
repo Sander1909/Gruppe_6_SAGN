@@ -3,6 +3,7 @@
 #include "Gruppe_6_SAGN.h"
 #include "StandardEnemy.h"
 #include "StandardEnemyProjectile.h"
+#include "PlayerProjectile.h"
 
 AStandardEnemy::AStandardEnemy()
 {
@@ -13,6 +14,18 @@ AStandardEnemy::AStandardEnemy()
 void AStandardEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AStandardEnemy::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StandardEnemy no collision box"));
+
+	}
 }
 
 void AStandardEnemy::Tick( float DeltaTime )
@@ -93,8 +106,16 @@ void AStandardEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor 
 	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult &SweepResult)
 {
-	/*if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
+	if (OtherActor->IsA(APlayerProjectile::StaticClass()))
 	{
+		Health--;
+		if (Health < 1)
+		{
+			Destroy();
+		}
 
-	}*/
+		OtherActor->Destroy();
+
+		UE_LOG(LogTemp, Warning, TEXT("StandardEnemy health is: %i"), Health);
+	}
 }

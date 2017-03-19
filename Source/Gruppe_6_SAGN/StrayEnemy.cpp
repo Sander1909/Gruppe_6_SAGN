@@ -17,6 +17,18 @@ AStrayEnemy::AStrayEnemy()
 void AStrayEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AStrayEnemy::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StrayEnemy no collision box"));
+
+	}
 	
 }
 

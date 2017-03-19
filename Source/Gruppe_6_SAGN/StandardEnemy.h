@@ -35,7 +35,8 @@ public:
 		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
 			UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 			bool bFromSweep, const FHitResult &SweepResult);
-
+	UPROPERTY(EditAnywhere)
+		UShapeComponent * CollisionBox = nullptr;
 
 private:
 	
@@ -48,6 +49,8 @@ private:
 	float ShootTimer;
 
 	int EnemyMode = 1;
+
+	int Health = 4;
 
 	//EnemyMode 1: Chase and rotate towards player
 	//EnemyMode 2: Stand still and shoot towards player

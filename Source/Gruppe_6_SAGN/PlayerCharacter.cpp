@@ -19,7 +19,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CollisionBox = this->FindComponentByClass<USphereComponent>();
+	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
 
 	if (CollisionBox)
 	{

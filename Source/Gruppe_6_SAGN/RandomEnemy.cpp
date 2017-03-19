@@ -18,8 +18,19 @@ void ARandomEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyRotation = GetActorRotation();
-	
+	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ARandomEnemy::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RandomEnemy no collision box"));
+	}
+
+		MyRotation = GetActorRotation();
+
 }
 
 // Called every frame

@@ -18,6 +18,18 @@ void APacmanEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APacmanEnemy::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PacmanEnemy no collision box"));
+
+	}
+
 }
 
 // Called every frame

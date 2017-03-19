@@ -37,7 +37,7 @@ public:
 			bool bFromSweep, const FHitResult &SweepResult);
 
 	UPROPERTY(EditAnywhere)
-		UShapeComponent * CollisionBox;
+		UShapeComponent * CollisionBox = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 		TSubclassOf<class APlayerProjectile> PlayerProjectile_BP;

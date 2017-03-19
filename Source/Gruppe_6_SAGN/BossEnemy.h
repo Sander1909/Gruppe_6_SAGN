@@ -30,6 +30,9 @@ public:
 		UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult &SweepResult);
 
+	UPROPERTY(EditAnywhere)
+		UShapeComponent * CollisionBox = nullptr;
+
 
 private:
 
