@@ -37,7 +37,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 		TSubclassOf<class ACurvingBossBullet> CurvingBossBullet_BP;
 
-	void SpawnBulletWave();
+	void SpawnBulletWave(float DeltaTime);
+	void SpawnBulletStream(float DeltaTime);
 
 private:
 
@@ -46,4 +47,20 @@ private:
 	int Health = 40;
 
 	float BulletWaveTimer;
+
+	int BossMode = 1;
+
+	int WavesSpawned;
+
+	float NewMode;
+
+	float StreamDelay;
+
+	float AddYawToStream;
+
+	float AddInvertedYawToStream;
+
+	float StopStream;
+
+	int NewModeArray[2] = { 1,3 };
 };

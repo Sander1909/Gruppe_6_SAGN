@@ -29,7 +29,7 @@ void ACurvingBossBullet::Tick( float DeltaTime )
 	MoveForward(DeltaTime);
 	CurveLeft();
 
-	if (TimeToDestroy > 12.0f)
+	if (TimeToDestroy > 10.0f)
 	{
 		Destroy();
 	}
@@ -45,7 +45,7 @@ void ACurvingBossBullet::MoveForward(float DeltaTime)
 
 void ACurvingBossBullet::CurveLeft()
 {
-	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 0.3f, 0.0f);
+	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 0.5f, 0.0f);
 
 	SetActorRotation(NewRotation);
 }

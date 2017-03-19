@@ -25,6 +25,6 @@ public:
 
 private:
 
-	float Speed = 400.0f;
+	float Speed = 800.0f;
 	float TimeToDestroy;
 };

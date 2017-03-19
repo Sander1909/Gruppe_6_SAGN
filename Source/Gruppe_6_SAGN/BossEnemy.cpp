@@ -9,7 +9,7 @@
 // Sets default values
 ABossEnemy::ABossEnemy()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -18,7 +18,7 @@ ABossEnemy::ABossEnemy()
 void ABossEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
 
 	if (CollisionBox)
@@ -29,22 +29,44 @@ void ABossEnemy::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BossEnemy no collision box"));
 	}
+
 }
 
 // Called every frame
-void ABossEnemy::Tick( float DeltaTime )
+void ABossEnemy::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 
-	BulletWaveTimer += DeltaTime;
 
 	MoveForward(DeltaTime);
 	RotateToPlayer();
 
-	if (BulletWaveTimer > 1.0f)
+	switch (BossMode)
 	{
-		SpawnBulletWave();
-		BulletWaveTimer = 0.0f;
+	case 1:
+		SpawnBulletWave(DeltaTime);
+
+		break;
+	case 2:
+
+		//Attack buffer
+		NewMode += DeltaTime;
+
+		if (NewMode > 4.0f)
+		{
+			BossMode = NewModeArray[rand()%2];
+			NewMode = 0.0f;
+		}
+		break;
+	case 3:
+		SpawnBulletStream(DeltaTime);
+
+		break;
+
+	default:
+
+		break;
+
 	}
 }
 
@@ -90,7 +112,7 @@ void ABossEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *Oth
 	}
 }
 
-void ABossEnemy::SpawnBulletWave()
+void ABossEnemy::SpawnBulletWave(float DeltaTime)
 {
 	UWorld * World;
 
@@ -104,10 +126,59 @@ void ABossEnemy::SpawnBulletWave()
 
 	FVector Location = GetActorLocation();
 
-	for (int i = 0; i < 36; i++)
+	BulletWaveTimer += DeltaTime;
+
+	if (BulletWaveTimer > 1.0f)
 	{
-		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, NewRotation);
-		NewRotation = NewRotation + AddYaw;
+		for (int i = 0; i < 36; i++)
+		{
+			World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, NewRotation);
+			NewRotation = NewRotation + AddYaw;
+		}
+
+		BulletWaveTimer = 0.0f;
+		WavesSpawned++;
+	}
+
+	if (WavesSpawned > 5)
+	{
+		BossMode = 2;
+		WavesSpawned = 0;
+	}
+}
+
+void ABossEnemy::SpawnBulletStream(float DeltaTime)
+{
+	StopStream = StopStream + DeltaTime;
+	StreamDelay = StreamDelay + DeltaTime;
+
+	UWorld * World;
+
+	World = GetWorld();
+
+	FVector Location = GetActorLocation();
+
+	if (StreamDelay > 0.15f)
+	{
+		AddYawToStream = AddYawToStream + 10.0f;
+		AddInvertedYawToStream = AddInvertedYawToStream + 10.0f;
+
+		FRotator NewRotationOne = FRotator(0.0, AddYawToStream, 0.0);
+		FRotator NewRotationTwo = FRotator(0.0, AddInvertedYawToStream + 180, 0.0);
+
+
+		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, NewRotationOne);
+		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, -NewRotationOne);
+		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, NewRotationTwo);
+		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, -NewRotationTwo);
+
+		StreamDelay = 0.0f;
+	}
+
+	if (StopStream > 4.0f)
+	{
+		BossMode = 2;
+		StopStream = 0.0f;
 	}
 
 }
