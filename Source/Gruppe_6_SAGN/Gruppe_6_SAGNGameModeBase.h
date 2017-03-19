@@ -12,8 +12,18 @@ UCLASS()
 class GRUPPE_6_SAGN_API AGruppe_6_SAGNGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
-	
+
+public:
+
+	AGruppe_6_SAGNGameModeBase();
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+private:
+
+	int WaveNumber = 1;
 	
 	
 };
