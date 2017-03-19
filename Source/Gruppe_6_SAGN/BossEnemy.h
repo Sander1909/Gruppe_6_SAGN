@@ -26,6 +26,7 @@ public:
 	void MoveForward(float DeltaTime);
 	void RotateToPlayer();
 
+	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
 		UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult &SweepResult);
@@ -33,10 +34,16 @@ public:
 	UPROPERTY(EditAnywhere)
 		UShapeComponent * CollisionBox = nullptr;
 
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class ACurvingBossBullet> CurvingBossBullet_BP;
+
+	void SpawnBulletWave();
 
 private:
 
-	float MovementValue = 50.0f;
+	float MovementValue = 2.0f;
 	
-	
+	int Health = 40;
+
+	float BulletWaveTimer;
 };
