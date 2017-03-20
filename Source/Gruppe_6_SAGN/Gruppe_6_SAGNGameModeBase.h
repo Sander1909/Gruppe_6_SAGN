@@ -21,6 +21,30 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class AStandardEnemy> StandardEnemy_BP;
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class APacmanEnemy> PacmanEnemy_BP;
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class ARandomEnemy> RandomEnemy_BP;
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class AStrayEnemy> StrayEnemy_BP;
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class ABossEnemy> BossEnemy_BP;
+
+	void SpawnStandardEnemy();
+	void SpawnPacmanEnemy();
+	void SpawnRandomEnemy();
+	void SpawnStrayEnemy();
+	void SpawnBossEnemy();
+
+	UPROPERTY()
+		UWorld * World;
+
 private:
 
 	int WaveNumber = 1;
