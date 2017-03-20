@@ -29,7 +29,6 @@ void ARandomEnemy::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("RandomEnemy no collision box"));
 	}
 
-		MyRotation = GetActorRotation();
 
 }
 
@@ -83,12 +82,16 @@ void ARandomEnemy::SpawnProjectile(float DeltaTime)
 	
 	World = GetWorld();
 
+	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+
+	FVector NewDirection = PlayerLocation - GetActorLocation();
+
+
 	if (ProjectileDelay > 0.5f)
 	{
-		World->SpawnActor<AStandardEnemyProjectile>(StandardEnemyProjectile_BP, GetActorLocation(), MyRotation);
+		World->SpawnActor<AStandardEnemyProjectile>(StandardEnemyProjectile_BP, GetActorLocation(), NewDirection.Rotation());
 		ProjectileDelay = 0.0f;	
 		
-		MyRotation.Yaw = MyRotation.Yaw + 3.0f;
 	}
 }
 

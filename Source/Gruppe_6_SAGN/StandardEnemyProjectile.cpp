@@ -28,7 +28,7 @@ void AStandardEnemyProjectile::Tick( float DeltaTime )
 
 	TimeToDestroy += DeltaTime;
 
-	if (TimeToDestroy > 40.0f)
+	if (TimeToDestroy > 20.0f)
 	{
 		Destroy();
 	}

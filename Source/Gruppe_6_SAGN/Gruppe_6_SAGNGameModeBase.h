@@ -48,6 +48,8 @@ public:
 private:
 
 	int WaveNumber = 1;
+
+	int Timer;
 	
 	
 };

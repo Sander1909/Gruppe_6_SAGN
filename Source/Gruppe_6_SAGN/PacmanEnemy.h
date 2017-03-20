@@ -46,7 +46,7 @@ private:
 
 	float MovementValue = 200.0f;
 
-	int MovementMode = 1;
+	int MovementMode = rand() %4+1;
 
 	float SwitchMode;
 

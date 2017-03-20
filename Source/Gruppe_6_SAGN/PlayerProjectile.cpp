@@ -28,7 +28,7 @@ void APlayerProjectile::Tick( float DeltaTime )
 
 	TimeToDestroy += DeltaTime;
 
-	if (TimeToDestroy > 40.0f)
+	if (TimeToDestroy > 15.0f)
 	{
 		Destroy();
 	}

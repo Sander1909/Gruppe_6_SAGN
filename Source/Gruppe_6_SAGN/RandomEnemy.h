@@ -47,7 +47,6 @@ private:
 
 	float ProjectileDelay;
 
-	FRotator MyRotation;
 
 	
 	

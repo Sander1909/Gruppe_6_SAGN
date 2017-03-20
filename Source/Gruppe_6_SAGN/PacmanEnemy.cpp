@@ -8,7 +8,7 @@
 // Sets default values
 APacmanEnemy::APacmanEnemy()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -17,7 +17,7 @@ APacmanEnemy::APacmanEnemy()
 void APacmanEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
 
 	if (CollisionBox)
@@ -33,9 +33,9 @@ void APacmanEnemy::BeginPlay()
 }
 
 // Called every frame
-void APacmanEnemy::Tick( float DeltaTime )
+void APacmanEnemy::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 
 	SwitchMode += DeltaTime;
 
@@ -49,9 +49,20 @@ void APacmanEnemy::Tick( float DeltaTime )
 
 		if (SwitchMode > 1.0f)
 		{
-			MovementMode = Mode1[rand() % 2];
-			UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
-			SwitchMode = 0.0f;
+			if (GetActorLocation().X > 2000)
+			{
+				MovementMode = 2;
+				SwitchMode = 0.0f;
+				UE_LOG(LogTemp, Error, TEXT("Detected wall"));
+
+			}
+			else
+			{
+				MovementMode = Mode1[rand() % 2];
+				UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+				SwitchMode = 0.0f;
+			}
+
 		}
 
 		break;
@@ -61,24 +72,49 @@ void APacmanEnemy::Tick( float DeltaTime )
 		MoveDown();
 
 
+
 		if (SwitchMode > 1.0f)
 		{
-			MovementMode = Mode2[rand() % 2];
-			UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+			if (SwitchMode > 1.0f)
+			{
+				if (GetActorLocation().X < -2000)
+				{
+					MovementMode = 1;
+					SwitchMode = 0.0f;
+					UE_LOG(LogTemp, Error, TEXT("Detected wall"));
 
-			SwitchMode = 0.0f;
-		}
-		break;
+				}
+
+				else
+				{
+					MovementMode = Mode2[rand() % 2];
+					UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+
+					SwitchMode = 0.0f;
+				}
+			}
+			break;
 
 	case 3:
 		MoveLeft();
 
 		if (SwitchMode > 1.0f)
 		{
-			MovementMode = Mode3[rand() % 2];
-			UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+			if (GetActorLocation().Y < -2000)
+			{
+				MovementMode = 4;
+				SwitchMode = 0.0f;
+				UE_LOG(LogTemp, Error, TEXT("Detected wall"));
 
-			SwitchMode = 0.0f;
+			}
+			else
+			{
+
+				MovementMode = Mode3[rand() % 2];
+				UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+
+				SwitchMode = 0.0f;
+			}
 		}
 		break;
 
@@ -87,10 +123,21 @@ void APacmanEnemy::Tick( float DeltaTime )
 
 		if (SwitchMode > 1.0f)
 		{
-			MovementMode = Mode4[rand() % 2];
-			UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+			if (GetActorLocation().Y > 2000)
+			{
+				MovementMode = 3;
+				SwitchMode = 0.0f;
+				UE_LOG(LogTemp, Error, TEXT("Detected wall"));
 
-			SwitchMode = 0.0f;
+			}
+			else
+			{
+				MovementMode = Mode4[rand() % 2];
+				UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+
+				SwitchMode = 0.0f;
+			}
+
 		}
 		break;
 
@@ -99,79 +146,79 @@ void APacmanEnemy::Tick( float DeltaTime )
 		UE_LOG(LogTemp, Error, TEXT("No movement selected"));
 
 		break;
+		}
+
 	}
-
 }
-
-// Called to bind functionality to input
-void APacmanEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
-void APacmanEnemy::MoveUp()
-{
-	FVector MoveUp = FVector(0.0f, 1.0f, 0.0f);
-
-	AddMovementInput(MoveUp, MovementValue);
-}
-
-void APacmanEnemy::MoveDown()
-{
-	FVector MoveDown = FVector(0.0f, -1.0f, 0.0f);
-
-	AddMovementInput(MoveDown, MovementValue);
-}
-
-void APacmanEnemy::MoveLeft()
-{
-	FVector MoveLeft = FVector(-1.0f, 0.0f, 0.0f);
-
-	AddMovementInput(MoveLeft, MovementValue);
-
-}
-
-void APacmanEnemy::MoveRight()
-{
-	FVector MoveRight = FVector(1.0f, 0.0f, 0.0f);
-
-	AddMovementInput(MoveRight, MovementValue);
-
-}
-
-void APacmanEnemy::RotateToPlayer()
-{
-	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-
-	FVector NewDirection = PlayerLocation - GetActorLocation();
-
-	SetActorRotation(NewDirection.Rotation());
-
-}
-
-void APacmanEnemy::SpawnStaticProjectile(float DeltaTime)
-{
-	UWorld * World;
-
-	World = GetWorld();
-
-	SpawnTimer += DeltaTime;
-
-	if (SpawnTimer > 0.3f)
+	// Called to bind functionality to input
+	void APacmanEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
-		World->SpawnActor<AStaticProjectile>(StaticProjectile_BP, GetActorLocation(), FRotator::ZeroRotator);
-		SpawnTimer = 0.0f;
+		Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 	}
 
-}
+	void APacmanEnemy::MoveUp()
+	{
+		FVector MoveUp = FVector(1.0f, 0.0f, 0.0f);
 
-void APacmanEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
-	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
-	bool bFromSweep, const FHitResult &SweepResult)
-{
-//	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
-//	{
+		AddMovementInput(MoveUp, MovementValue);
+	}
 
-//	}
-}
+	void APacmanEnemy::MoveDown()
+	{
+		FVector MoveDown = FVector(-1.0f, 0.0f, 0.0f);
+
+		AddMovementInput(MoveDown, MovementValue);
+	}
+
+	void APacmanEnemy::MoveLeft()
+	{
+		FVector MoveLeft = FVector(0.0f, -1.0f, 0.0f);
+
+		AddMovementInput(MoveLeft, MovementValue);
+
+	}
+
+	void APacmanEnemy::MoveRight()
+	{
+		FVector MoveRight = FVector(0.0f, 1.0f, 0.0f);
+
+		AddMovementInput(MoveRight, MovementValue);
+
+	}
+
+	void APacmanEnemy::RotateToPlayer()
+	{
+		FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+
+		FVector NewDirection = PlayerLocation - GetActorLocation();
+
+		SetActorRotation(NewDirection.Rotation());
+
+	}
+
+	void APacmanEnemy::SpawnStaticProjectile(float DeltaTime)
+	{
+		UWorld * World;
+
+		World = GetWorld();
+
+		SpawnTimer += DeltaTime;
+
+		if (SpawnTimer > 0.3f)
+		{
+			World->SpawnActor<AStaticProjectile>(StaticProjectile_BP, GetActorLocation(), FRotator::ZeroRotator);
+			SpawnTimer = 0.0f;
+		}
+
+	}
+
+	void APacmanEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+		UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult &SweepResult)
+	{
+		//	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
+		//	{
+
+		//	}
+	}
