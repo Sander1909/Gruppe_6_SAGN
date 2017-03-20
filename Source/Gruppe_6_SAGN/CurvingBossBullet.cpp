@@ -29,7 +29,7 @@ void ACurvingBossBullet::Tick( float DeltaTime )
 	MoveForward(DeltaTime);
 	CurveLeft();
 
-	if (TimeToDestroy > 10.0f)
+	if (TimeToDestroy > 8.0f)
 	{
 		Destroy();
 	}
