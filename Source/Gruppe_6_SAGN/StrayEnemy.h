@@ -42,6 +42,10 @@ public:
 
 private:
 
+	bool bHitByMelee = false;
+
+	float HitByMeleeTimer;
+
 	float MovementValue = 600.0f;
 
 	float ShootTimer;

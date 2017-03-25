@@ -2,6 +2,7 @@
 
 #include "Gruppe_6_SAGN.h"
 #include "SpinningMeleeEnemy.h"
+#include "PlayerMeleeAttack.h"
 
 
 // Sets default values
@@ -16,6 +17,18 @@ ASpinningMeleeEnemy::ASpinningMeleeEnemy()
 void ASpinningMeleeEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CollisionBox = this->FindComponentByClass<UCapsuleComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ASpinningMeleeEnemy::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpinningMeleeEnemy no collision box"));
+
+	}
 	
 }
 
@@ -24,39 +37,61 @@ void ASpinningMeleeEnemy::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	UE_LOG(LogTemp, Warning, TEXT("Move is %f"), MovementValue);
+	//UE_LOG(LogTemp, Warning, TEXT("Move is %f"), MovementValue);
 
-	EnemySwitchMode += DeltaTime;
-
-	switch (EnemyMode)
+	//Default mode guard.
+	if (!bHitByMelee)
 	{
-	case 1:
+		EnemySwitchMode += DeltaTime;
 
-	MoveForward(DeltaTime);
-	SetEnemyRotation();
-
-	if (EnemySwitchMode > 5.0f)
-	{
-		EnemyMode = 2;
-		EnemySwitchMode = 0.0f;
-	}
-
-		break;
-
-	case 2:
-		DashAttack(DeltaTime);
-
-		if (EnemySwitchMode > 6.0f)
+		switch (EnemyMode)
 		{
-			EnemyMode = 1;
-			EnemySwitchMode = 0.0f;
-			MovementValue = 5.0f;
+		case 1:
+
+			MoveForward(DeltaTime);
+			SetEnemyRotation();
+
+			if (EnemySwitchMode > 5.0f)
+			{
+				EnemyMode = 2;
+				EnemySwitchMode = 0.0f;
+			}
+
+			break;
+
+		case 2:
+			DashAttack(DeltaTime);
+
+			if (EnemySwitchMode > 6.0f)
+			{
+				EnemyMode = 1;
+				EnemySwitchMode = 0.0f;
+				MovementValue = 5.0f;
+			}
+
+			break;
+
+		default:
+			break;
 		}
+	}
+	//If the enemy is hit by MeleeAttack, act accordingly.
+	else if (bHitByMelee)
+	{
+		HitByMeleeTimer += DeltaTime;
 
-		break;
-
-	default:
-		break;
+		if (HitByMeleeTimer < 0.5f)
+		{
+			AddMovementInput(GetActorLocation() - GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(), MovementValue);
+		}
+		else if (HitByMeleeTimer >= 0.5f)
+		{
+			if (HitByMeleeTimer > 1.5f)
+			{
+				HitByMeleeTimer = 0.0f;
+				bHitByMelee = false;
+			}
+		}
 	}
 
 }
@@ -101,3 +136,21 @@ void ASpinningMeleeEnemy::DashAttack(float DeltaTime)
 	}
 
 }
+
+void ASpinningMeleeEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult &SweepResult)
+{
+	/*if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
+	{
+
+	}*/
+	if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpinningMeleeEnemy was hit by PlayerMeleeAttack"));
+		bHitByMelee = true;
+		HitByMeleeTimer = 0.0f;
+
+	}
+}
+

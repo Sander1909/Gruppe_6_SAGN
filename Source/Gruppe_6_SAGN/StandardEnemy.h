@@ -39,8 +39,12 @@ public:
 		UShapeComponent * CollisionBox = nullptr;
 
 private:
+
+	bool bHitByMelee = false;
+
+	float HitByMeleeTimer;
 	
-	float MovementValue = 1000.0f;
+	float MovementValue = 600.0f;
 
 	float SpawnBuffer = 30.0f;
 

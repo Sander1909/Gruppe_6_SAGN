@@ -4,6 +4,7 @@
 #include "PlayerCharacter.h"
 #include "StandardEnemyProjectile.h"
 #include "PlayerProjectile.h"
+#include "PlayerMeleeAttack.h"
 
 
 // Sets default values
@@ -79,7 +80,14 @@ void APlayerCharacter::Shoot()
 
 void APlayerCharacter::Melee()
 {
+	UWorld * World;
 
+	World = GetWorld();
+
+	if (World)
+	{
+		World->SpawnActor<APlayerMeleeAttack>(PlayerMeleeAttack_BP, GetActorLocation(), FRotator::ZeroRotator);
+	}
 }
 
 void APlayerCharacter::MoveX(float Value)

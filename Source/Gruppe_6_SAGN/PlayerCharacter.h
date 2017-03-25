@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 		TSubclassOf<class APlayerProjectile> PlayerProjectile_BP;
 
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class APlayerMeleeAttack> PlayerMeleeAttack_BP;
+
 
 private:
 

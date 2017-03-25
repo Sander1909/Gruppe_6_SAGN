@@ -3,6 +3,7 @@
 #include "Gruppe_6_SAGN.h"
 #include "StrayEnemy.h"
 #include "StandardEnemyProjectile.h"
+#include "PlayerMeleeAttack.h"
 
 
 // Sets default values
@@ -37,17 +38,39 @@ void AStrayEnemy::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	ShootTimer += DeltaTime;
-
-	MoveForward(DeltaTime);
-
-	if (ShootTimer > 3.5f)
+	//Default mode guard.
+	if (!bHitByMelee)
 	{
-		SpawnProjectile();
+		ShootTimer += DeltaTime;
 
-		RotateToPlayer();
+		MoveForward(DeltaTime);
 
-		ShootTimer = 0.0;
+		if (ShootTimer > 3.5f)
+		{
+			SpawnProjectile();
+
+			RotateToPlayer();
+
+			ShootTimer = 0.0;
+		}
+	}
+	//If the enemy is hit by MeleeAttack, act accordingly.
+	else if (bHitByMelee)
+	{
+		HitByMeleeTimer += DeltaTime;
+
+		if (HitByMeleeTimer < 0.5f)
+		{
+			AddMovementInput(GetActorLocation() - GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(), MovementValue);
+		}
+		else if (HitByMeleeTimer >= 0.5f)
+		{
+			if (HitByMeleeTimer > 1.5f)
+			{
+				HitByMeleeTimer = 0.0f;
+				bHitByMelee = false;
+			}
+		}
 	}
 
 }
@@ -101,4 +124,11 @@ void AStrayEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *Ot
 	{
 
 	}*/
+	if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StrayEnemy was hit by PlayerMeleeAttack"));
+		bHitByMelee = true;
+		HitByMeleeTimer = 0.0f;
+
+	}
 }

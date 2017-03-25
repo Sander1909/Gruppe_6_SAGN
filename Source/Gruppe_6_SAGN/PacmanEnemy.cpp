@@ -3,6 +3,7 @@
 #include "Gruppe_6_SAGN.h"
 #include "PacmanEnemy.h"
 #include "StaticProjectile.h"
+#include "PlayerMeleeAttack.h"
 
 
 // Sets default values
@@ -42,52 +43,78 @@ void APacmanEnemy::Tick(float DeltaTime)
 	RotateToPlayer();
 	SpawnStaticProjectile(DeltaTime);
 
-	switch (MovementMode)
+	//Default mode guard.
+	if (!bHitByMelee)
 	{
-	case 1:
-		MoveUp();
-
-		if (SwitchMode > 1.0f)
+		switch (MovementMode)
 		{
-			if (GetActorLocation().X > 2000)
-			{
-				MovementMode = 2;
-				SwitchMode = 0.0f;
-				UE_LOG(LogTemp, Error, TEXT("Detected wall"));
+		case 1:
+			MoveUp();
 
-			}
-			else
-			{
-				MovementMode = Mode1[rand() % 2];
-				UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
-				SwitchMode = 0.0f;
-			}
-
-		}
-
-		break;
-
-	case 2:
-
-		MoveDown();
-
-
-
-		if (SwitchMode > 1.0f)
-		{
 			if (SwitchMode > 1.0f)
 			{
-				if (GetActorLocation().X < -2000)
+				if (GetActorLocation().X > 2000)
 				{
-					MovementMode = 1;
+					MovementMode = 2;
 					SwitchMode = 0.0f;
 					UE_LOG(LogTemp, Error, TEXT("Detected wall"));
 
 				}
-
 				else
 				{
-					MovementMode = Mode2[rand() % 2];
+					MovementMode = Mode1[rand() % 2];
+					UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+					SwitchMode = 0.0f;
+				}
+
+			}
+
+			break;
+
+		case 2:
+
+			MoveDown();
+
+
+
+			if (SwitchMode > 1.0f)
+			{
+				if (SwitchMode > 1.0f)
+				{
+					if (GetActorLocation().X < -2000)
+					{
+						MovementMode = 1;
+						SwitchMode = 0.0f;
+						UE_LOG(LogTemp, Error, TEXT("Detected wall"));
+
+					}
+
+					else
+					{
+						MovementMode = Mode2[rand() % 2];
+						UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+
+						SwitchMode = 0.0f;
+					}
+				}
+				break;
+
+		case 3:
+			MoveLeft();
+
+			if (SwitchMode > 1.0f)
+			{
+				if (GetActorLocation().Y < -2000)
+				{
+					MovementMode = 4;
+					SwitchMode = 0.0f;
+					UE_LOG(LogTemp, Error, TEXT("Detected wall"));
+
+				}
+				else
+				{
+
+					MovementMode = Mode3[rand() % 2];
 					UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
 
 					SwitchMode = 0.0f;
@@ -95,59 +122,55 @@ void APacmanEnemy::Tick(float DeltaTime)
 			}
 			break;
 
-	case 3:
-		MoveLeft();
+		case 4:
+			MoveRight();
 
-		if (SwitchMode > 1.0f)
+			if (SwitchMode > 1.0f)
+			{
+				if (GetActorLocation().Y > 2000)
+				{
+					MovementMode = 3;
+					SwitchMode = 0.0f;
+					UE_LOG(LogTemp, Error, TEXT("Detected wall"));
+
+				}
+				else
+				{
+					MovementMode = Mode4[rand() % 2];
+					UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
+
+					SwitchMode = 0.0f;
+				}
+
+			}
+			break;
+
+		default:
+
+			UE_LOG(LogTemp, Error, TEXT("No movement selected"));
+
+			break;
+			}
+
+		}
+	}
+	//If the enemy is hit by MeleeAttack, act accordingly.
+	else if (bHitByMelee)
+	{
+		HitByMeleeTimer += DeltaTime;
+
+		if (HitByMeleeTimer < 0.5f)
 		{
-			if (GetActorLocation().Y < -2000)
-			{
-				MovementMode = 4;
-				SwitchMode = 0.0f;
-				UE_LOG(LogTemp, Error, TEXT("Detected wall"));
-
-			}
-			else
-			{
-
-				MovementMode = Mode3[rand() % 2];
-				UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
-
-				SwitchMode = 0.0f;
-			}
+			AddMovementInput(GetActorLocation() - GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(), MovementValue);
 		}
-		break;
-
-	case 4:
-		MoveRight();
-
-		if (SwitchMode > 1.0f)
+		else if (HitByMeleeTimer >= 0.5f)
 		{
-			if (GetActorLocation().Y > 2000)
+			if (HitByMeleeTimer > 1.5f)
 			{
-				MovementMode = 3;
-				SwitchMode = 0.0f;
-				UE_LOG(LogTemp, Error, TEXT("Detected wall"));
-
+				HitByMeleeTimer = 0.0f;
+				bHitByMelee = false;
 			}
-			else
-			{
-				MovementMode = Mode4[rand() % 2];
-				UE_LOG(LogTemp, Warning, TEXT("MoveMode is: %i"), MovementMode);
-
-				SwitchMode = 0.0f;
-			}
-
 		}
-		break;
-
-	default:
-
-		UE_LOG(LogTemp, Error, TEXT("No movement selected"));
-
-		break;
-		}
-
 	}
 }
 	// Called to bind functionality to input
@@ -221,4 +244,11 @@ void APacmanEnemy::Tick(float DeltaTime)
 		//	{
 
 		//	}
+		if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PacmanEnemy was hit by PlayerMeleeAttack"));
+			bHitByMelee = true;
+			HitByMeleeTimer = 0.0f;
+
+		}
 	}

@@ -4,6 +4,7 @@
 #include "StandardEnemy.h"
 #include "StandardEnemyProjectile.h"
 #include "PlayerProjectile.h"
+#include "PlayerMeleeAttack.h"
 
 AStandardEnemy::AStandardEnemy()
 {
@@ -32,17 +33,38 @@ void AStandardEnemy::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	switch (EnemyMode)
+	if (!bHitByMelee)
 	{
-	case 1:
-		MoveForward(DeltaTime);
-		RotateToPlayer();
-		break;
-	case 2:
-		SpawnProjectile(DeltaTime);
-		RotateToPlayer();
-		break;
+		switch (EnemyMode)
+		{
+		case 1:
+			MoveForward(DeltaTime);
+			RotateToPlayer();
+			break;
+		case 2:
+			SpawnProjectile(DeltaTime);
+			RotateToPlayer();
+			break;
+		}
 	}
+	else if (bHitByMelee)
+	{
+		HitByMeleeTimer += DeltaTime;
+
+		if (HitByMeleeTimer < 0.5f)
+		{
+			AddMovementInput(GetActorLocation() - GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(), MovementValue);
+		}
+		else if (HitByMeleeTimer >= 0.5f)
+		{
+			if (HitByMeleeTimer > 1.5f)
+			{
+				HitByMeleeTimer = 0.0f;
+				bHitByMelee = false;
+			}
+		}
+	}
+
 }
 
 void AStandardEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -117,5 +139,12 @@ void AStandardEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor 
 		OtherActor->Destroy();
 
 		UE_LOG(LogTemp, Warning, TEXT("StandardEnemy health is: %i"), Health);
+	}
+	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Standard Enemy was hit by PlayerMeleeAttack"));
+		bHitByMelee = true;
+		HitByMeleeTimer = 0.0f;
+
 	}
 }

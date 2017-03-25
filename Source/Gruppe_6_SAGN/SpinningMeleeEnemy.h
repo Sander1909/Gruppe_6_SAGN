@@ -23,7 +23,16 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+			UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+			bool bFromSweep, const FHitResult &SweepResult);
+
+	UPROPERTY(EditAnywhere)
+		UShapeComponent * CollisionBox = nullptr;
+
 	void MoveForward(float DeltaTime);
+
 	void SetEnemyRotation();
 
 	void DashAttack(float DeltaTime);
@@ -31,8 +40,14 @@ public:
 
 private:
 
+	bool bHitByMelee = false;
+
+	float HitByMeleeTimer;
+
 	float MovementValue = 5.0f;
+
 	float EnemySwitchMode;
+
 	float DashRotationTimer;
 
 	int EnemyMode = 1;

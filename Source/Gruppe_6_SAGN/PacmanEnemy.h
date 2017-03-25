@@ -44,6 +44,10 @@ public:
 
 private:
 
+	bool bHitByMelee = false;
+
+	float HitByMeleeTimer;
+
 	float MovementValue = 200.0f;
 
 	int MovementMode = rand() %4+1;
