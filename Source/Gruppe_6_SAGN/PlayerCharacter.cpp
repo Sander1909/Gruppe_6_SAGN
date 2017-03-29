@@ -5,12 +5,14 @@
 #include "StandardEnemyProjectile.h"
 #include "PlayerProjectile.h"
 #include "PlayerMeleeAttack.h"
+#include "CurvingBossBullet.h"
+#include "StaticProjectile.h"
 
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -37,13 +39,13 @@ void APlayerCharacter::BeginPlay()
 	MyController->bShowMouseCursor = true;
 
 
-	
+
 }
 
 // Called every frame
-void APlayerCharacter::Tick( float DeltaTime )
+void APlayerCharacter::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 
 	SetPlayerRotation();
 
@@ -108,7 +110,32 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
 	{
+		Health--;
+		if (Health < 1)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
+		}
+		OtherActor->Destroy();
+	}
 
+	else if (OtherActor->IsA(ACurvingBossBullet::StaticClass()))
+	{
+		Health--;
+		if (Health < 1)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
+		}
+		OtherActor->Destroy();
+	}
+
+	else if (OtherActor->IsA(AStaticProjectile::StaticClass()))
+	{
+		Health--;
+		if (Health < 1)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
+		}
+		OtherActor->Destroy();
 	}
 }
 
@@ -120,15 +147,15 @@ void APlayerCharacter::SetPlayerRotation()
 
 	if (HitResult)
 	{
-			FVector CursorLocation = Hit.Location;
+		FVector CursorLocation = Hit.Location;
 
-			//      UE_LOG(LogTemp, Warning, TEXT("Cursor location %s!"), *CursorLocation.ToString());
+		//      UE_LOG(LogTemp, Warning, TEXT("Cursor location %s!"), *CursorLocation.ToString());
 
-			FVector TempLocation = FVector(CursorLocation.X, CursorLocation.Y, 30.f);
+		FVector TempLocation = FVector(CursorLocation.X, CursorLocation.Y, 30.f);
 
-			FVector NewDirection = TempLocation - GetActorLocation();
-			NewDirection.Z = 0.0f;
-			NewDirection.Normalize();
-			SetActorRotation(NewDirection.Rotation());
+		FVector NewDirection = TempLocation - GetActorLocation();
+		NewDirection.Z = 0.0f;
+		NewDirection.Normalize();
+		SetActorRotation(NewDirection.Rotation());
 	}
 }

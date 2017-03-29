@@ -50,5 +50,7 @@ private:
 
 	float SpawnBuffer = 30.0f;
 
+	int Health = 10;
+
 
 };
