@@ -4,6 +4,7 @@
 #include "StrayEnemy.h"
 #include "StandardEnemyProjectile.h"
 #include "PlayerMeleeAttack.h"
+#include "PlayerProjectile.h"
 
 
 // Sets default values
@@ -120,11 +121,16 @@ void AStrayEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *Ot
 	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult &SweepResult)
 {
-	/*if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
+	if (OtherActor->IsA(APlayerProjectile::StaticClass()))
 	{
-
-	}*/
-	if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
+		Health--;
+		if (Health < 1)
+		{
+			Destroy();
+		}
+		OtherActor->Destroy();
+	}
+	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StrayEnemy was hit by PlayerMeleeAttack"));
 		bHitByMelee = true;

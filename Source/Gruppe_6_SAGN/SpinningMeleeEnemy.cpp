@@ -3,6 +3,7 @@
 #include "Gruppe_6_SAGN.h"
 #include "SpinningMeleeEnemy.h"
 #include "PlayerMeleeAttack.h"
+#include "PlayerProjectile.h"
 
 
 // Sets default values
@@ -141,11 +142,17 @@ void ASpinningMeleeEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult &SweepResult)
 {
-	/*if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
+	if (OtherActor->IsA(APlayerProjectile::StaticClass()))
 	{
+		Health--;
+		if (Health < 1)
+		{
+			Destroy();
+		}
+		OtherActor->Destroy();
+	}
 
-	}*/
-	if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
+	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SpinningMeleeEnemy was hit by PlayerMeleeAttack"));
 		bHitByMelee = true;

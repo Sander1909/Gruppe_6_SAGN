@@ -20,39 +20,124 @@ void AGruppe_6_SAGNGameModeBase::BeginPlay()
 
 	Super::BeginPlay();
 
-	SpawnStandardEnemy();
-
-
 }
 
 void AGruppe_6_SAGNGameModeBase::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);	
 
-	Timer += 1;
 
-	switch (WaveNumber)
+	if (!WaveIntermission)
 	{
-	case 1:
+		switch (WaveNumber)
+		{
+		case 1:
 
-		if (Timer % 180 == 0)
-		{
-			//SpawnStandardEnemy();
-		}
-		if (Timer % 300 == 0)
-		{
-			//SpawnStrayEnemy();
-		}
-		if (Timer % 400 == 0)
-		{
-			SpawnPacmanEnemy();
-		}
-		if (Timer % 2000 == 0)
-		{
+			StandardSpawnTimer += DeltaTime;
+
+			if (StandardSpawnTimer > 2.0f && EnemiesSpawned < 15)
+			{
+				SpawnStandardEnemy();
+				EnemiesSpawned++;
+				StandardSpawnTimer = 0.0f;
+			}
+			//Kontrollerer hvor mange enemies som skal spawnes i waven, starter waveintermission.
+			if (EnemiesSpawned >= 15)
+			{
+				WaveIntermission = true;
+				UE_LOG(LogTemp, Warning, TEXT("First Round is OVER!"));
+			}
+
+			break;
+
+		case 2:
+
+			StraySpawnTimer += DeltaTime;
+
+			if (StraySpawnTimer > 3.0f && EnemiesSpawned < 15)
+			{
+				SpawnStrayEnemy();
+				EnemiesSpawned++;
+				StraySpawnTimer = 0.0f;
+			}
+			if (EnemiesSpawned >= 15)
+			{
+				WaveIntermission = true;
+				UE_LOG(LogTemp, Warning, TEXT("Second Round is OVER!"));
+			}
+
+			break;
+
+		case 3:
+
+			StandardSpawnTimer += DeltaTime;
+			StraySpawnTimer += DeltaTime;
+
+			if (StandardSpawnTimer > 2.0f && EnemiesSpawned < 35)
+			{
+				SpawnStandardEnemy();
+				EnemiesSpawned++;
+				StandardSpawnTimer = 0.0f;
+			}
+			if (StraySpawnTimer > 5.0f && EnemiesSpawned < 35)
+			{
+				SpawnStrayEnemy();
+				EnemiesSpawned++;
+				StraySpawnTimer = 0.0f;
+			}
+
+			if (EnemiesSpawned >= 35)
+			{
+				WaveIntermission = true;
+				UE_LOG(LogTemp, Warning, TEXT("Third Round is OVER!"));
+			}
+
+			break;
+
+		case 4:
+
+			PacmanSpawnTimer += DeltaTime;
+
+			if (PacmanSpawnTimer > 2.0f && EnemiesSpawned < 15)
+			{
+				SpawnPacmanEnemy();
+				EnemiesSpawned++;
+				PacmanSpawnTimer = 0.0f;
+			}
+
+			if (EnemiesSpawned >= 15)
+			{
+				WaveIntermission = true;
+				UE_LOG(LogTemp, Warning, TEXT("Fourth Round is OVER!"));
+			}
+
+			break;
+
+		case 5:
+
 			SpawnBossEnemy();
+			WaveNumber++;
+			UE_LOG(LogTemp, Warning, TEXT("Fifth Round is OVER!"));
+			break;
+
+		case 6:
+
+			break;
 		}
-		break;
 	}
+	else
+	{
+		WaveTimer += DeltaTime;
+		if (WaveTimer > 10.0f)
+		{
+			WaveNumber++;
+			WaveIntermission = false;
+			UE_LOG(LogTemp, Warning, TEXT("Next Wave had BEGUN!"));
+			WaveTimer = 0.0f;
+			EnemiesSpawned = 0;
+		}
+	}
+
 
 
 }
@@ -61,7 +146,7 @@ void AGruppe_6_SAGNGameModeBase::SpawnStandardEnemy()
 {
 	World = GetWorld();
 
-	FVector Location = FVector(1000.f, -1000.0f, 0.0f);
+	FVector Location = FVector(SpawnValues[rand()%2], SpawnValues[rand()%2], 0.0f);
 
 	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 
@@ -75,7 +160,7 @@ void AGruppe_6_SAGNGameModeBase::SpawnPacmanEnemy()
 {
 	World = GetWorld();
 
-	FVector Location = FVector(-1000.0f, 0.0f, 0.0f);
+	FVector Location = FVector(PacmanSpawnValues[rand() % 2], PacmanSpawnValues[rand() % 2], 0.0f);
 
 	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 
@@ -89,7 +174,7 @@ void AGruppe_6_SAGNGameModeBase::SpawnRandomEnemy()
 {
 	World = GetWorld();
 
-	FVector Location = FVector(-1000.f, -1000.0f, 0.0f);
+	FVector Location = FVector(SpawnValues[rand() % 2], SpawnValues[rand() % 2], 0.0f);
 
 	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 
@@ -103,7 +188,7 @@ void AGruppe_6_SAGNGameModeBase::SpawnStrayEnemy()
 {
 	World = GetWorld();
 
-	FVector Location = FVector(1000.f, 1000.0f, 0.0f);
+	FVector Location = FVector(SpawnValues[rand() % 2], SpawnValues[rand() % 2], 0.0f);
 
 	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 

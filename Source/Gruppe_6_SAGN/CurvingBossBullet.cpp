@@ -17,6 +17,17 @@ void ACurvingBossBullet::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CollisionBox = this->FindComponentByClass<USphereComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ACurvingBossBullet::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CurvingBossProjectile no collision box"));
+
+	}
 }
 
 // Called every frame
@@ -48,4 +59,15 @@ void ACurvingBossBullet::CurveLeft()
 	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 0.5f, 0.0f);
 
 	SetActorRotation(NewRotation);
+}
+
+void ACurvingBossBullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult &SweepResult)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Hit A Wall"));
+	if (OtherActor->IsRootComponentStatic())
+	{
+		Destroy();
+	}
 }

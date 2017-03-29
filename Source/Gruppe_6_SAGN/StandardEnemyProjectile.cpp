@@ -16,7 +16,19 @@ AStandardEnemyProjectile::AStandardEnemyProjectile()
 void AStandardEnemyProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	CollisionBox = this->FindComponentByClass<USphereComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AStandardEnemyProjectile::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StandardEnemyProjectile no collision box"));
+
+	}
+
 }
 
 // Called every frame
@@ -39,4 +51,15 @@ void AStandardEnemyProjectile::SetProjectileLocation(float DeltaTime)
 	FVector NewLocation = GetActorLocation() + GetActorForwardVector() * DeltaTime * Speed;
 
 	SetActorLocation(NewLocation);
+}
+
+void AStandardEnemyProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult &SweepResult)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Hit A Wall"));
+	if (OtherActor->IsRootComponentStatic())
+	{
+		Destroy();
+	}
 }

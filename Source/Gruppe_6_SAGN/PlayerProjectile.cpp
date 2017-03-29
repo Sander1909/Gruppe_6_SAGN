@@ -16,6 +16,18 @@ APlayerProjectile::APlayerProjectile()
 void APlayerProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CollisionBox = this->FindComponentByClass<USphereComponent>();
+
+	if (CollisionBox)
+	{
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerProjectile::OnOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerProjectile no collision box"));
+
+	}
 	
 }
 
@@ -42,3 +54,13 @@ void APlayerProjectile::SetProjectileLocation(float DeltaTime)
 	SetActorLocation(NewLocation);
 }
 
+void APlayerProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult &SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hit A Wall"));
+	if (OtherActor->IsRootComponentStatic())
+	{
+		Destroy();
+	}
+}

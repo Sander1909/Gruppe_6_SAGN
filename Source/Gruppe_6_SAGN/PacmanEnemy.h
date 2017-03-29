@@ -50,6 +50,8 @@ private:
 
 	float MovementValue = 200.0f;
 
+	int Health = 2;
+
 	int MovementMode = rand() %4+1;
 
 	float SwitchMode;

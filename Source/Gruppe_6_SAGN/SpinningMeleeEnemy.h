@@ -50,6 +50,8 @@ private:
 
 	float DashRotationTimer;
 
+	int Health = 2;
+
 	int EnemyMode = 1;
 
 

@@ -48,7 +48,7 @@ private:
 
 	float SpawnBuffer = 30.0f;
 
-	float ShootRange = 700.0f;
+	float ShootRange = 1000.0f;
 
 	float ShootTimer;
 

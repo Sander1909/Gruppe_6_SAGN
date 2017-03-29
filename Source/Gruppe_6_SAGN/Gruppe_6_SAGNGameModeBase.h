@@ -47,9 +47,20 @@ public:
 
 private:
 
-	int WaveNumber = 1;
+	float SpawnValues[2]{ 2000.0f, -2000.0f };
+	float PacmanSpawnValues[2]{ 1000.0f, -1000.0f };
 
-	int Timer;
+	bool WaveIntermission = false;
+
+	int WaveNumber = 1;
+	int EnemiesSpawned = 0;
+
+	float WaveTimer;
+	float StandardSpawnTimer;
+	float StraySpawnTimer;
+	float PacmanSpawnTimer;
+	float SpinningMeleeTimer;
+	float RandomEnemyTimer;
 	
 	
 };
