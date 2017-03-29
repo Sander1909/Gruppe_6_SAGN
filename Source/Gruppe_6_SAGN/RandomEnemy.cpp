@@ -3,6 +3,7 @@
 #include "Gruppe_6_SAGN.h"
 #include "RandomEnemy.h"
 #include "StandardEnemyProjectile.h"
+#include "PlayerProjectile.h"
 
 
 // Sets default values
@@ -99,8 +100,13 @@ void ARandomEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *O
 	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult &SweepResult)
 {
-	/*if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
+	if (OtherActor->IsA(APlayerProjectile::StaticClass()))
 	{
-
-	} */
+		Health--;
+		if (Health < 1)
+		{
+			Destroy();
+		}
+		OtherActor->Destroy();
+	}
 }

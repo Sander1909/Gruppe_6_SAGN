@@ -4,6 +4,7 @@
 #include "PacmanEnemy.h"
 #include "StaticProjectile.h"
 #include "PlayerMeleeAttack.h"
+#include "PlayerProjectile.h"
 
 
 // Sets default values
@@ -240,11 +241,16 @@ void APacmanEnemy::Tick(float DeltaTime)
 		UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult &SweepResult)
 	{
-		//	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
-		//	{
-
-		//	}
-		if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
+		if (OtherActor->IsA(APlayerProjectile::StaticClass()))
+		{
+			Health--;
+			if (Health < 1)
+			{
+				Destroy();
+			}
+			OtherActor->Destroy();
+		}
+		else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("PacmanEnemy was hit by PlayerMeleeAttack"));
 			bHitByMelee = true;

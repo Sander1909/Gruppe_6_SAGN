@@ -42,6 +42,8 @@ public:
 
 private:
 
+	int Health = 4;
+
 	bool bHitByMelee = false;
 
 	float HitByMeleeTimer;

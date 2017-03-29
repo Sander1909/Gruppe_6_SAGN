@@ -41,6 +41,8 @@ public:
 
 private:
 
+	int Health = 3;
+
 	float MovementValue = 300.0f;
 	
 	float RandomTimer;

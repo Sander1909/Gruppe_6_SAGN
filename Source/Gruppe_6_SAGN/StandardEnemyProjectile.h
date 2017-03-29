@@ -22,9 +22,18 @@ public:
 
 	void SetProjectileLocation(float DeltaTime);
 
+	UPROPERTY(EditAnywhere)
+		UShapeComponent * CollisionBox;
+
+	UFUNCTION()
+		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
+			UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
+			bool bFromSweep, const FHitResult &SweepResult);
+
+
 private:
 
-	float Speed = 500.0f;
+	float Speed = 800.0f;
 	
 	float TimeToDestroy;
 };
