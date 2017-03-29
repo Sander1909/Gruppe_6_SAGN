@@ -31,27 +31,25 @@ public:
 	UPROPERTY(EditAnywhere)
 		UShapeComponent * CollisionBox = nullptr;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ASpinningMeleeEnemyAttack> SpinningMeleeEnemyAttack_BP;
+
 	void MoveForward(float DeltaTime);
 
 	void SetEnemyRotation();
 
-	void DashAttack(float DeltaTime);
+	void SpawnAttack(float DeltaTime);
+
 
 
 private:
 
 	bool bHitByMelee = false;
-
 	float HitByMeleeTimer;
-
-	float MovementValue = 5.0f;
-
-	float EnemySwitchMode;
-
-	float DashRotationTimer;
-
-	int Health = 2;
-
+	float MovementValue = 10.0f;
+	float SwitchModeTimer;
+	float SpawnAttackTimer;
+	int Health = 4;
 	int EnemyMode = 1;
 
 

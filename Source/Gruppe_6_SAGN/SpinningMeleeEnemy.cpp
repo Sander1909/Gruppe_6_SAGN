@@ -4,6 +4,7 @@
 #include "SpinningMeleeEnemy.h"
 #include "PlayerMeleeAttack.h"
 #include "PlayerProjectile.h"
+#include "SpinningMeleeEnemyAttack.h"
 
 
 // Sets default values
@@ -40,41 +41,32 @@ void ASpinningMeleeEnemy::Tick( float DeltaTime )
 
 	//UE_LOG(LogTemp, Warning, TEXT("Move is %f"), MovementValue);
 
+
+	SwitchModeTimer += DeltaTime;
+
 	//Default mode guard.
 	if (!bHitByMelee)
 	{
-		EnemySwitchMode += DeltaTime;
-
 		switch (EnemyMode)
 		{
 		case 1:
-
+			
 			MoveForward(DeltaTime);
 			SetEnemyRotation();
 
-			if (EnemySwitchMode > 5.0f)
+			if (SwitchModeTimer > 5.0f)
 			{
 				EnemyMode = 2;
-				EnemySwitchMode = 0.0f;
 			}
 
 			break;
-
+			
 		case 2:
-			DashAttack(DeltaTime);
 
-			if (EnemySwitchMode > 6.0f)
-			{
-				EnemyMode = 1;
-				EnemySwitchMode = 0.0f;
-				MovementValue = 5.0f;
-			}
+			SpawnAttack(DeltaTime);
 
-			break;
-
-		default:
-			break;
 		}
+		
 	}
 	//If the enemy is hit by MeleeAttack, act accordingly.
 	else if (bHitByMelee)
@@ -122,18 +114,30 @@ void ASpinningMeleeEnemy::SetEnemyRotation()
 	SetActorRotation(NewDirection.Rotation());
 }
 
-void ASpinningMeleeEnemy::DashAttack(float DeltaTime)
+void ASpinningMeleeEnemy::SpawnAttack(float DeltaTime)
 {
-	DashRotationTimer += DeltaTime;
 
-	MovementValue = 700.0f;
+	SwitchModeTimer += DeltaTime;
+	SpawnAttackTimer += DeltaTime;
 
-	MoveForward(DeltaTime);
+	UWorld * World;
+	World = GetWorld();
 
-	if (DashRotationTimer > 1.5f)
+	FRotator ActorRotation = GetActorRotation() + FRotator(0.0f, 3.2f, 0.0f);
+	SetActorRotation(ActorRotation);
+
+	if (SpawnAttackTimer > 0.3f)
 	{
-		SetEnemyRotation();
-		DashRotationTimer = 0.0f;
+		SpawnAttackTimer = 0.0f;
+
+		World->SpawnActor<ASpinningMeleeEnemyAttack>(SpinningMeleeEnemyAttack_BP, GetActorLocation() + GetActorForwardVector() * 300.0f, FRotator::ZeroRotator);
+	}
+
+
+	if (SwitchModeTimer > 9.0f)
+	{
+		SwitchModeTimer = 0.0f;
+		EnemyMode = 1;
 	}
 
 }

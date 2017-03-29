@@ -11,7 +11,7 @@
 AGruppe_6_SAGNGameModeBase::AGruppe_6_SAGNGameModeBase()
 {
 
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false; //change this
 
 }
 
