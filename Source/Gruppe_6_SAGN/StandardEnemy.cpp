@@ -138,11 +138,16 @@ void AStandardEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor 
 
 		OtherActor->Destroy();
 
-		UE_LOG(LogTemp, Warning, TEXT("StandardEnemy health is: %i"), Health);
+		//UE_LOG(LogTemp, Warning, TEXT("StandardEnemy health is: %i"), Health);
 	}
 	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Standard Enemy was hit by PlayerMeleeAttack"));
+		Health--;
+		if (Health < 1)
+		{
+			Destroy();
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("Standard Enemy was hit by PlayerMeleeAttack"));
 		bHitByMelee = true;
 		HitByMeleeTimer = 0.0f;
 

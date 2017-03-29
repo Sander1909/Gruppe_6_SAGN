@@ -45,10 +45,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 		TSubclassOf<class APlayerMeleeAttack> PlayerMeleeAttack_BP;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		int Health = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		float MaxHealth = 10.0f;
 
 private:
 
 	float SpawnBuffer = 30.0f;
-
 
 };

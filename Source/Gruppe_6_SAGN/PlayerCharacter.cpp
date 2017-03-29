@@ -5,6 +5,8 @@
 #include "StandardEnemyProjectile.h"
 #include "PlayerProjectile.h"
 #include "PlayerMeleeAttack.h"
+#include "CurvingBossBullet.h"
+#include "StaticProjectile.h"
 
 
 // Sets default values
@@ -46,6 +48,8 @@ void APlayerCharacter::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	SetPlayerRotation();
+
+	UE_LOG(LogTemp, Warning, TEXT("Player Health is %i"), Health);
 
 }
 
@@ -108,7 +112,32 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
 	{
+		Health--;
+		if (Health < 1)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
+		}
+		OtherActor->Destroy();
+	}
 
+	else if (OtherActor->IsA(ACurvingBossBullet::StaticClass()))
+	{
+		Health--;
+		if (Health < 1)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
+		}
+		OtherActor->Destroy();
+	}
+
+	else if (OtherActor->IsA(AStaticProjectile::StaticClass()))
+	{
+		Health--;
+		if (Health < 1)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
+		}
+		OtherActor->Destroy();
 	}
 }
 

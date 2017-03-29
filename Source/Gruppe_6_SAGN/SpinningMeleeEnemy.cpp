@@ -154,6 +154,12 @@ void ASpinningMeleeEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 	{
+		Health--;
+		if (Health < 1)
+		{
+			Destroy();
+		}
+
 		UE_LOG(LogTemp, Warning, TEXT("SpinningMeleeEnemy was hit by PlayerMeleeAttack"));
 		bHitByMelee = true;
 		HitByMeleeTimer = 0.0f;

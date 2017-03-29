@@ -132,7 +132,13 @@ void AStrayEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *Ot
 	}
 	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StrayEnemy was hit by PlayerMeleeAttack"));
+		Health--;
+		if (Health < 1)
+		{
+			Destroy();
+		}
+
+		//UE_LOG(LogTemp, Warning, TEXT("StrayEnemy was hit by PlayerMeleeAttack"));
 		bHitByMelee = true;
 		HitByMeleeTimer = 0.0f;
 

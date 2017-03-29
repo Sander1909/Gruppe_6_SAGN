@@ -252,7 +252,13 @@ void APacmanEnemy::Tick(float DeltaTime)
 		}
 		else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PacmanEnemy was hit by PlayerMeleeAttack"));
+			Health--;
+			if (Health < 1)
+			{
+				Destroy();
+			}
+
+			//UE_LOG(LogTemp, Warning, TEXT("PacmanEnemy was hit by PlayerMeleeAttack"));
 			bHitByMelee = true;
 			HitByMeleeTimer = 0.0f;
 
