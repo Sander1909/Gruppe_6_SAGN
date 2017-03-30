@@ -38,7 +38,15 @@ void AStrayEnemy::BeginPlay()
 void AStrayEnemy::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
+	if (bHitByProjectile)
+	{
+		HitByProjectileTimer += DeltaTime;
+		if (HitByProjectileTimer > 0.3f)
+		{
+			HitByProjectileTimer = 0.0f;
+			bHitByProjectile = false;
+		}
+	}
 	//Default mode guard.
 	if (!bHitByMelee)
 	{
@@ -76,13 +84,6 @@ void AStrayEnemy::Tick( float DeltaTime )
 
 }
 
-// Called to bind functionality to input
-void AStrayEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
 void AStrayEnemy::RotateToPlayer()
 {
 	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
@@ -94,14 +95,25 @@ void AStrayEnemy::RotateToPlayer()
 
 void AStrayEnemy::MoveForward(float DeltaTime)
 {
-	FVector ForwardVector = GetActorForwardVector() * DeltaTime;
+	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 
-	AddMovementInput(ForwardVector, MovementValue);
+	FVector NewDirection = PlayerLocation - GetActorLocation();
+
+	FVector ForwardVector = GetActorForwardVector() * DeltaTime;
+	if (!bHitByProjectile)
+	{
+		AddMovementInput(ForwardVector, MovementValue);
+	}
+	else
+	{
+		AddMovementInput(-NewDirection, MovementValue);
+	}
 }
 
 void AStrayEnemy::SpawnProjectile()
 {
-	FVector SpawnLocation = GetActorLocation();
+	FVector Location = GetActorLocation();
+	Location.Z = 10.0f;
 	FRotator ProjectileRotation = GetActorRotation();
 	FRotator AddYaw = FRotator(0.0f, 30.0f, 0.0f);
 
@@ -111,7 +123,7 @@ void AStrayEnemy::SpawnProjectile()
 
 	for (int i = 0; i < 12; i++)
 	{
-		World->SpawnActor<AStandardEnemyProjectile>(StandardEnemyProjectile_BP, SpawnLocation, ProjectileRotation);
+		World->SpawnActor<AStandardEnemyProjectile>(StandardEnemyProjectile_BP, Location, ProjectileRotation);
 		ProjectileRotation = ProjectileRotation + AddYaw;
 	}
 
@@ -124,6 +136,7 @@ void AStrayEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *Ot
 	if (OtherActor->IsA(APlayerProjectile::StaticClass()))
 	{
 		Health--;
+		bHitByProjectile = true;
 		if (Health < 1)
 		{
 			Destroy();

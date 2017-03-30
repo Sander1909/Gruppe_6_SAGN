@@ -41,8 +41,19 @@ void APacmanEnemy::Tick(float DeltaTime)
 
 	SwitchMode += DeltaTime;
 
-	RotateToPlayer();
 	SpawnStaticProjectile(DeltaTime);
+
+	RotateToPlayer();
+
+	if (bHitByProjectile)
+	{
+		HitByProjectileTimer += DeltaTime;
+		if (HitByProjectileTimer > 0.3f)
+		{
+			HitByProjectileTimer = 0.0f;
+			bHitByProjectile = false;
+		}
+	}
 
 	//Default mode guard.
 	if (!bHitByMelee)
@@ -174,40 +185,60 @@ void APacmanEnemy::Tick(float DeltaTime)
 		}
 	}
 }
-	// Called to bind functionality to input
-	void APacmanEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-	{
-		Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	}
 
 	void APacmanEnemy::MoveUp()
 	{
 		FVector MoveUp = FVector(1.0f, 0.0f, 0.0f);
-
-		AddMovementInput(MoveUp, MovementValue);
+		if (!bHitByProjectile)
+		{
+			AddMovementInput(MoveUp, MovementValue);
+		}
+		else
+		{
+			AddMovementInput(-GetActorForwardVector(), MovementValue);
+		}
 	}
 
 	void APacmanEnemy::MoveDown()
 	{
 		FVector MoveDown = FVector(-1.0f, 0.0f, 0.0f);
 
-		AddMovementInput(MoveDown, MovementValue);
+		if (!bHitByProjectile)
+		{
+			AddMovementInput(MoveDown, MovementValue);
+		}
+		else
+		{
+			AddMovementInput(-GetActorForwardVector(), MovementValue);
+		}
 	}
 
 	void APacmanEnemy::MoveLeft()
 	{
 		FVector MoveLeft = FVector(0.0f, -1.0f, 0.0f);
 
-		AddMovementInput(MoveLeft, MovementValue);
-
+		if (!bHitByProjectile)
+		{
+			AddMovementInput(MoveLeft, MovementValue);
+		}
+		else
+		{
+			AddMovementInput(-GetActorForwardVector(), MovementValue);
+		}
 	}
 
 	void APacmanEnemy::MoveRight()
 	{
 		FVector MoveRight = FVector(0.0f, 1.0f, 0.0f);
 
-		AddMovementInput(MoveRight, MovementValue);
+		if (!bHitByProjectile)
+		{
+			AddMovementInput(MoveRight, MovementValue);
+		}
+		else
+		{
+			AddMovementInput(-GetActorForwardVector(), MovementValue);
+		}
 
 	}
 
@@ -229,9 +260,12 @@ void APacmanEnemy::Tick(float DeltaTime)
 
 		SpawnTimer += DeltaTime;
 
+		FVector Location = GetActorLocation();
+		Location.Z = 10.0f;
+
 		if (SpawnTimer > 0.3f)
 		{
-			World->SpawnActor<AStaticProjectile>(StaticProjectile_BP, GetActorLocation(), FRotator::ZeroRotator);
+			World->SpawnActor<AStaticProjectile>(StaticProjectile_BP, Location, FRotator::ZeroRotator);
 			SpawnTimer = 0.0f;
 		}
 
@@ -244,6 +278,7 @@ void APacmanEnemy::Tick(float DeltaTime)
 		if (OtherActor->IsA(APlayerProjectile::StaticClass()))
 		{
 			Health--;
+			bHitByProjectile = true;
 			if (Health < 1)
 			{
 				Destroy();

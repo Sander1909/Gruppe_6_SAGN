@@ -33,6 +33,17 @@ void AStandardEnemy::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	if (bHitByProjectile)
+	{
+		MoveForward(DeltaTime);
+		HitByProjectileTimer += DeltaTime;
+		if (HitByProjectileTimer > 0.3f)
+		{
+			HitByProjectileTimer = 0.0f;
+			bHitByProjectile = false;
+		}
+	}
+
 	if (!bHitByMelee)
 	{
 		switch (EnemyMode)
@@ -77,7 +88,14 @@ void AStandardEnemy::MoveForward(float DeltaTime)
 {
 	FVector ForwardVector = GetActorForwardVector() * DeltaTime;
 
-	AddMovementInput(ForwardVector, MovementValue);
+	if (!bHitByProjectile)
+	{
+		AddMovementInput(ForwardVector, MovementValue);
+	}
+	else
+	{
+		AddMovementInput(-ForwardVector, MovementValue);
+	}
 }
 
 void AStandardEnemy::RotateToPlayer()
@@ -102,13 +120,14 @@ void AStandardEnemy::SpawnProjectile(float DeltaTime)
 
 	World = GetWorld();
 
-	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * SpawnBuffer;
+	FVector Location = GetActorLocation();
+	Location.Z = 10.0f;
 
 	ShootTimer += DeltaTime;
 
 	if (ShootTimer >= 1.5f)
 	{
-		World->SpawnActor<AStandardEnemyProjectile>(StandardEnemyProjectile_BP, SpawnLocation, GetActorRotation());
+		World->SpawnActor<AStandardEnemyProjectile>(StandardEnemyProjectile_BP, Location, GetActorRotation());
 		ShootTimer = 0.0f;
 	}
 
@@ -131,6 +150,9 @@ void AStandardEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor 
 	if (OtherActor->IsA(APlayerProjectile::StaticClass()))
 	{
 		Health--;
+
+		bHitByProjectile = true;
+
 		if (Health < 1)
 		{
 			Destroy();
@@ -142,7 +164,7 @@ void AStandardEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor 
 	}
 	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 	{
-		Health--;
+		//Health--;
 		if (Health < 1)
 		{
 			Destroy();

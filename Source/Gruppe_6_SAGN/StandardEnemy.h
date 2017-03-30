@@ -35,26 +35,28 @@ public:
 		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
 			UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 			bool bFromSweep, const FHitResult &SweepResult);
+
 	UPROPERTY(EditAnywhere)
 		UShapeComponent * CollisionBox = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		int Health = 4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		float MaxHealth = 4;
 
 private:
 
 	bool bHitByMelee = false;
+	bool bHitByProjectile = false;
 
 	float HitByMeleeTimer;
-	
 	float MovementValue = 600.0f;
-
-	float SpawnBuffer = 30.0f;
-
 	float ShootRange = 1000.0f;
-
 	float ShootTimer;
+	float HitByProjectileTimer;
 
 	int EnemyMode = 1;
-
-	int Health = 4;
 
 	//EnemyMode 1: Chase and rotate towards player
 	//EnemyMode 2: Stand still and shoot towards player

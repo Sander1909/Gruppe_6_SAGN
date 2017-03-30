@@ -157,6 +157,7 @@ void ABossEnemy::SpawnBulletStream(float DeltaTime)
 	World = GetWorld();
 
 	FVector Location = GetActorLocation();
+	Location.Z = 10.0f;
 
 	if (StreamDelay > 0.15f)
 	{
@@ -168,9 +169,9 @@ void ABossEnemy::SpawnBulletStream(float DeltaTime)
 
 
 		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, NewRotationOne);
-		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, -NewRotationOne);
+		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, NewRotationOne.GetInverse());
 		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, NewRotationTwo);
-		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, -NewRotationTwo);
+		World->SpawnActor<ACurvingBossBullet>(CurvingBossBullet_BP, Location, NewRotationTwo.GetInverse());
 
 		StreamDelay = 0.0f;
 	}

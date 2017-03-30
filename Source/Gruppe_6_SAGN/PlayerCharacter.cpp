@@ -49,7 +49,7 @@ void APlayerCharacter::Tick( float DeltaTime )
 
 	SetPlayerRotation();
 
-	UE_LOG(LogTemp, Warning, TEXT("Player Health is %i"), Health);
+	//UE_LOG(LogTemp, Warning, TEXT("Player Health is %i"), Health);
 
 }
 
@@ -58,97 +58,109 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	InputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerCharacter::Shoot);
-	InputComponent->BindAction("Melee", IE_Pressed, this, &APlayerCharacter::Melee);
+		InputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerCharacter::Shoot);
+		InputComponent->BindAction("Melee", IE_Pressed, this, &APlayerCharacter::Melee);
 
-	InputComponent->BindAxis("MoveX", this, &APlayerCharacter::MoveX);
-	InputComponent->BindAxis("MoveY", this, &APlayerCharacter::MoveY);
-
+		InputComponent->BindAxis("MoveX", this, &APlayerCharacter::MoveX);
+		InputComponent->BindAxis("MoveY", this, &APlayerCharacter::MoveY);
 }
 
 void APlayerCharacter::Shoot()
 {
-	UWorld * World;
-
-	World = GetWorld();
-
-	FVector Location = GetActorLocation() + GetActorForwardVector() * SpawnBuffer;
-
-	if (World)
+	if (!bIsDead)
 	{
-		World->SpawnActor<APlayerProjectile>(PlayerProjectile_BP, Location, GetActorRotation());
-	}
+		UWorld * World;
 
+		World = GetWorld();
+
+		FVector Location = GetActorLocation() + GetActorForwardVector() * SpawnBuffer;
+		Location.Z = 10.0f;
+
+		if (World)
+		{
+			World->SpawnActor<APlayerProjectile>(PlayerProjectile_BP, Location, GetActorRotation());
+		}
+	}
 
 }
 
 void APlayerCharacter::Melee()
 {
-	UWorld * World;
-
-	World = GetWorld();
-
-	if (World)
+	if (!bIsDead)
 	{
-		World->SpawnActor<APlayerMeleeAttack>(PlayerMeleeAttack_BP, GetActorLocation(), FRotator::ZeroRotator);
+		UWorld * World;
+
+		World = GetWorld();
+
+		if (World)
+		{
+			World->SpawnActor<APlayerMeleeAttack>(PlayerMeleeAttack_BP, GetActorLocation(), FRotator::ZeroRotator);
+		}
 	}
 }
 
 void APlayerCharacter::MoveX(float Value)
 {
-	FVector MoveX = FVector(1.0f, 0.0f, 0.0f);
-	AddMovementInput(MoveX, Value);
+	if (!bIsDead)
+	{
+		FVector MoveX = FVector(1.0f, 0.0f, 0.0f);
+		AddMovementInput(MoveX, Value);
+	}
 }
 
 void APlayerCharacter::MoveY(float Value)
 {
-	FVector MoveY = FVector(0.0f, 1.0f, 0.0f);
-	AddMovementInput(MoveY, Value);
+	if (!bIsDead)
+	{
+		FVector MoveY = FVector(0.0f, 1.0f, 0.0f);
+		AddMovementInput(MoveY, Value);
+	}
 }
 
 void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
 	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult &SweepResult)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("Player is."));
+
 	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
 	{
 		Health--;
-		if (Health < 1)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
-		}
 		OtherActor->Destroy();
 	}
 
 	else if (OtherActor->IsA(ACurvingBossBullet::StaticClass()))
 	{
 		Health--;
-		if (Health < 1)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
-		}
 		OtherActor->Destroy();
 	}
 
 	else if (OtherActor->IsA(AStaticProjectile::StaticClass()))
 	{
 		Health--;
-		if (Health < 1)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Player is DEAD! Exit game please."));
-		}
 		OtherActor->Destroy();
+	}
+
+	if (Health < 1)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player has died."));
+		//UGameplayStatics::SetGamePaused(GetWorld(), true);
+		bIsDead = true;
+		//OnPlayerDeath.Broadcast();
 	}
 }
 
 void APlayerCharacter::SetPlayerRotation()
 {
-	FHitResult Hit;
-	bool HitResult = false;
-	HitResult = GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldStatic), true, Hit);
-
-	if (HitResult)
+	if (!bIsDead)
 	{
+		FHitResult Hit;
+		bool HitResult = false;
+		HitResult = GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldStatic), true, Hit);
+
+		if (HitResult)
+		{
 			FVector CursorLocation = Hit.Location;
 
 			//      UE_LOG(LogTemp, Warning, TEXT("Cursor location %s!"), *CursorLocation.ToString());
@@ -159,5 +171,6 @@ void APlayerCharacter::SetPlayerRotation()
 			NewDirection.Z = 0.0f;
 			NewDirection.Normalize();
 			SetActorRotation(NewDirection.Rotation());
+		}
 	}
 }

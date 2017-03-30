@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
+
 UCLASS()
 class GRUPPE_6_SAGN_API APlayerCharacter : public ACharacter
 {
@@ -51,8 +53,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 		float MaxHealth = 10.0f;
 
+	//UPROPERTY(BlueprintAssignable)
+		//FOnPlayerDeath OnPlayerDeath;
+
 private:
 
 	float SpawnBuffer = 30.0f;
+
+	bool bIsDead = false;
 
 };

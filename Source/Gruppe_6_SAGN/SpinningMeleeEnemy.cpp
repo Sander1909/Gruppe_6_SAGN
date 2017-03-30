@@ -4,12 +4,13 @@
 #include "SpinningMeleeEnemy.h"
 #include "PlayerMeleeAttack.h"
 #include "PlayerProjectile.h"
+#include "SpinningMeleeEnemyAttack.h"
 
 
 // Sets default values
 ASpinningMeleeEnemy::ASpinningMeleeEnemy()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -30,21 +31,33 @@ void ASpinningMeleeEnemy::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("SpinningMeleeEnemy no collision box"));
 
 	}
-	
+
 }
 
 // Called every frame
-void ASpinningMeleeEnemy::Tick( float DeltaTime )
+void ASpinningMeleeEnemy::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 
 	//UE_LOG(LogTemp, Warning, TEXT("Move is %f"), MovementValue);
+
+
+	SwitchModeTimer += DeltaTime;
+
+	if (bHitByProjectile)
+	{
+		MoveForward(DeltaTime);
+		HitByProjectileTimer += DeltaTime;
+		if (HitByProjectileTimer > 0.3f)
+		{
+			HitByProjectileTimer = 0.0f;
+			bHitByProjectile = false;
+		}
+	}
 
 	//Default mode guard.
 	if (!bHitByMelee)
 	{
-		EnemySwitchMode += DeltaTime;
-
 		switch (EnemyMode)
 		{
 		case 1:
@@ -52,29 +65,19 @@ void ASpinningMeleeEnemy::Tick( float DeltaTime )
 			MoveForward(DeltaTime);
 			SetEnemyRotation();
 
-			if (EnemySwitchMode > 5.0f)
+			if (SwitchModeTimer > 3.5f)
 			{
 				EnemyMode = 2;
-				EnemySwitchMode = 0.0f;
 			}
 
 			break;
 
 		case 2:
-			DashAttack(DeltaTime);
 
-			if (EnemySwitchMode > 6.0f)
-			{
-				EnemyMode = 1;
-				EnemySwitchMode = 0.0f;
-				MovementValue = 5.0f;
-			}
+			SpawnAttack(DeltaTime);
 
-			break;
-
-		default:
-			break;
 		}
+
 	}
 	//If the enemy is hit by MeleeAttack, act accordingly.
 	else if (bHitByMelee)
@@ -107,8 +110,18 @@ void ASpinningMeleeEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInput
 void ASpinningMeleeEnemy::MoveForward(float DeltaTime)
 {
 	FVector ForwardVector = GetActorForwardVector() * DeltaTime;
+	if (!bHitByProjectile)
+	{
+		AddMovementInput(ForwardVector, MovementValue);
+	}
+	else
+	{
+		FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 
-	AddMovementInput(ForwardVector, MovementValue);
+		FVector NewDirection = PlayerLocation - GetActorLocation();
+
+		AddMovementInput(-NewDirection, 300.0f);
+	}
 }
 
 void ASpinningMeleeEnemy::SetEnemyRotation()
@@ -122,18 +135,33 @@ void ASpinningMeleeEnemy::SetEnemyRotation()
 	SetActorRotation(NewDirection.Rotation());
 }
 
-void ASpinningMeleeEnemy::DashAttack(float DeltaTime)
+void ASpinningMeleeEnemy::SpawnAttack(float DeltaTime)
 {
-	DashRotationTimer += DeltaTime;
 
-	MovementValue = 700.0f;
+	SwitchModeTimer += DeltaTime;
+	SpawnAttackTimer += DeltaTime;
 
-	MoveForward(DeltaTime);
+	UWorld * World;
+	World = GetWorld();
 
-	if (DashRotationTimer > 1.5f)
+	FRotator ActorRotation = GetActorRotation() + FRotator(0.0f, 3.2f, 0.0f);
+	SetActorRotation(ActorRotation);
+
+	FVector Location = GetActorLocation();
+	Location.Z = 10.0f;
+
+	if (SpawnAttackTimer > 0.3f)
 	{
-		SetEnemyRotation();
-		DashRotationTimer = 0.0f;
+		SpawnAttackTimer = 0.0f;
+
+		World->SpawnActor<ASpinningMeleeEnemyAttack>(SpinningMeleeEnemyAttack_BP, Location + GetActorForwardVector() * 300.0f, FRotator::ZeroRotator);
+	}
+
+
+	if (SwitchModeTimer > 7.0f)
+	{
+		SwitchModeTimer = 0.0f;
+		EnemyMode = 1;
 	}
 
 }
@@ -145,6 +173,7 @@ void ASpinningMeleeEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	if (OtherActor->IsA(APlayerProjectile::StaticClass()))
 	{
 		Health--;
+		bHitByProjectile = true;
 		if (Health < 1)
 		{
 			Destroy();
@@ -154,16 +183,9 @@ void ASpinningMeleeEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 	{
-		Health--;
-		if (Health < 1)
-		{
-			Destroy();
-		}
-
-		UE_LOG(LogTemp, Warning, TEXT("SpinningMeleeEnemy was hit by PlayerMeleeAttack"));
+		//UE_LOG(LogTemp, Warning, TEXT("SpinningMeleeEnemy was hit by PlayerMeleeAttack"));
 		bHitByMelee = true;
 		HitByMeleeTimer = 0.0f;
 
 	}
 }
-
