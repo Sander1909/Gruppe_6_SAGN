@@ -40,11 +40,15 @@ public:
 	void SpawnBulletWave(float DeltaTime);
 	void SpawnBulletStream(float DeltaTime);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		int Health = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		float MaxHealth = 100;
+
 private:
 
 	float MovementValue = 2.0f;
-	
-	int Health = 40;
 
 	float BulletWaveTimer;
 

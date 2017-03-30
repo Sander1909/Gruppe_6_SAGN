@@ -20,9 +20,6 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	void MoveUp();
 	void MoveDown();
 	void MoveLeft();
@@ -42,20 +39,24 @@ public:
 	UPROPERTY(EditAnywhere)
 		UShapeComponent * CollisionBox = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		int Health = 2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		float MaxHealth = 2;
+
 private:
 
 	bool bHitByMelee = false;
+	bool bHitByProjectile = false;
 
 	float HitByMeleeTimer;
-
+	float HitByProjectileTimer;
 	float MovementValue = 200.0f;
-
-	int Health = 2;
 
 	int MovementMode = rand() %4+1;
 
 	float SwitchMode;
-
 	float SpawnTimer;
 	
 	int Mode1[2] = {3,4};

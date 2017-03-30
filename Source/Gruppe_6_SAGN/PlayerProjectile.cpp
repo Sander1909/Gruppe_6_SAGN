@@ -58,7 +58,7 @@ void APlayerProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult &SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hit A Wall"));
+	//UE_LOG(LogTemp, Warning, TEXT("Hit A Wall"));
 	if (OtherActor->IsRootComponentStatic())
 	{
 		Destroy();
