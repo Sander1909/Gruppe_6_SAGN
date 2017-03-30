@@ -54,7 +54,7 @@ void ASpinningMeleeEnemy::Tick( float DeltaTime )
 			MoveForward(DeltaTime);
 			SetEnemyRotation();
 
-			if (SwitchModeTimer > 5.0f)
+			if (SwitchModeTimer > 3.5f)
 			{
 				EnemyMode = 2;
 			}
@@ -134,7 +134,7 @@ void ASpinningMeleeEnemy::SpawnAttack(float DeltaTime)
 	}
 
 
-	if (SwitchModeTimer > 9.0f)
+	if (SwitchModeTimer > 7.0f)
 	{
 		SwitchModeTimer = 0.0f;
 		EnemyMode = 1;

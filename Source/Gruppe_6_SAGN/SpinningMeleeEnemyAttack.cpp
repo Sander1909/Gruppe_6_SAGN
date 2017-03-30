@@ -56,7 +56,7 @@ void ASpinningMeleeEnemyAttack::Tick( float DeltaTime )
 
 void ASpinningMeleeEnemyAttack::RotateActor()
 {
-	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 7.0f, 0.0f);
+	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 14.0f, 0.0f);
 	SetActorRotation(NewRotation);
 }
 

@@ -34,6 +34,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class ASpinningMeleeEnemyAttack> SpinningMeleeEnemyAttack_BP;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		int Health = 4;
+
 	void MoveForward(float DeltaTime);
 
 	void SetEnemyRotation();
@@ -49,7 +53,6 @@ private:
 	float MovementValue = 10.0f;
 	float SwitchModeTimer;
 	float SpawnAttackTimer;
-	int Health = 4;
 	int EnemyMode = 1;
 
 
