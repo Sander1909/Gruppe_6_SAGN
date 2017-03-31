@@ -7,6 +7,7 @@
 #include "PlayerMeleeAttack.h"
 #include "CurvingBossBullet.h"
 #include "StaticProjectile.h"
+#include "P_Up_Bulletrain.h"
 
 
 // Sets default values
@@ -162,6 +163,12 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		OtherActor->Destroy();
 	}
 
+	else if (OtherActor->IsA(AP_Up_BulletRain::StaticClass()))
+	{
+		SpawnBulletRain();
+		OtherActor->Destroy();
+	}
+
 	if (Health < 1)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player has died."));
@@ -196,5 +203,23 @@ void APlayerCharacter::SetPlayerRotation()
 
 void APlayerCharacter::StartCameraShake_Implementation()
 {
+
+}
+
+void APlayerCharacter::SpawnBulletRain()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Bullet Rain"));
+	UWorld * World;
+
+	World = GetWorld();
+
+	for (int y = -Width; y < Width; y += 100)
+	{
+		for(int x = Heigth; x > 1350; x -= 100)
+		{
+			World->SpawnActor<APlayerProjectile>(PlayerProjectile_BP, FVector(x, y, 10.0f), FVector(-1.0f, 0.0f, 0.0f).Rotation());
+		}
+	}
+
 
 }

@@ -32,6 +32,7 @@ public:
 	void MoveY(float Value);
 
 	void SetPlayerRotation();
+	void SpawnBulletRain();
 
 	UPROPERTY(BlueprintAssignable)
 		FOnPlayerHit OnPlayerHit;
@@ -63,6 +64,9 @@ private:
 
 	float MeleeDashTimer;
 	float Speed = 1000.0f;
+
+	int Width = 2450;
+	int Heigth = 2050;
 
 	bool bIsDead = false;
 	bool bMeleeDash = false;
