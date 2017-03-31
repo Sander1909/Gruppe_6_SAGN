@@ -39,6 +39,8 @@ void APlayerCharacter::BeginPlay()
 	MyController->bShowMouseCursor = true;
 
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
+
+	//OnPlayerHit.Broadcast();
 	
 }
 
@@ -85,7 +87,7 @@ void APlayerCharacter::Shoot()
 
 		World = GetWorld();
 
-		FVector Location = GetActorLocation() + GetActorForwardVector() * SpawnBuffer;
+		FVector Location = GetActorLocation() + GetActorForwardVector();
 		Location.Z = 10.0f;
 
 		if (World)
@@ -142,18 +144,21 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
 	{
 		Health--;
+		StartCameraShake();
 		OtherActor->Destroy();
 	}
 
 	else if (OtherActor->IsA(ACurvingBossBullet::StaticClass()))
 	{
 		Health--;
+		StartCameraShake();
 		OtherActor->Destroy();
 	}
 
 	else if (OtherActor->IsA(AStaticProjectile::StaticClass()))
 	{
 		Health--;
+		StartCameraShake();
 		OtherActor->Destroy();
 	}
 
@@ -162,7 +167,6 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		UE_LOG(LogTemp, Warning, TEXT("Player has died."));
 		//UGameplayStatics::SetGamePaused(GetWorld(), true);
 		bIsDead = true;
-		//OnPlayerDeath.Broadcast();
 	}
 }
 
@@ -188,4 +192,9 @@ void APlayerCharacter::SetPlayerRotation()
 			SetActorRotation(NewDirection.Rotation());
 		}
 	}
+}
+
+void APlayerCharacter::StartCameraShake_Implementation()
+{
+
 }

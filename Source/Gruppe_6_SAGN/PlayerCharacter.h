@@ -5,7 +5,7 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerHit);
 
 UCLASS()
 class GRUPPE_6_SAGN_API APlayerCharacter : public ACharacter
@@ -33,6 +33,9 @@ public:
 
 	void SetPlayerRotation();
 
+	UPROPERTY(BlueprintAssignable)
+		FOnPlayerHit OnPlayerHit;
+
 	UFUNCTION()
 		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
 			UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
@@ -47,18 +50,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 		TSubclassOf<class APlayerMeleeAttack> PlayerMeleeAttack_BP;
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "CameraShake")
+		void StartCameraShake();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 		int Health = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 		float MaxHealth = 10.0f;
 
-	//UPROPERTY(BlueprintAssignable)
-		//FOnPlayerDeath OnPlayerDeath;
-
 private:
 
-	float SpawnBuffer = 30.0f;
 	float MeleeDashTimer;
 	float Speed = 1000.0f;
 

@@ -145,7 +145,7 @@ void AStrayEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *Ot
 	}
 	else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 	{
-		Health--;
+		//Health--;
 		if (Health < 1)
 		{
 			Destroy();
