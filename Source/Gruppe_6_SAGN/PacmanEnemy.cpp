@@ -287,7 +287,7 @@ void APacmanEnemy::Tick(float DeltaTime)
 		}
 		else if (OtherActor->IsA(APlayerMeleeAttack::StaticClass()))
 		{
-			Health--;
+			//Health--;
 			if (Health < 1)
 			{
 				Destroy();

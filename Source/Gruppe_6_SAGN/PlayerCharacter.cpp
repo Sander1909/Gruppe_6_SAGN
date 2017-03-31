@@ -7,6 +7,7 @@
 #include "PlayerMeleeAttack.h"
 #include "CurvingBossBullet.h"
 #include "StaticProjectile.h"
+#include "P_Up_Bulletrain.h"
 
 
 // Sets default values
@@ -38,7 +39,9 @@ void APlayerCharacter::BeginPlay()
 
 	MyController->bShowMouseCursor = true;
 
+	GetCharacterMovement()->MaxWalkSpeed = Speed;
 
+	//OnPlayerHit.Broadcast();
 	
 }
 
@@ -48,6 +51,18 @@ void APlayerCharacter::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	SetPlayerRotation();
+
+	if (bMeleeDash)
+	{
+		MeleeDashTimer += DeltaTime;
+		GetCharacterMovement()->MaxWalkSpeed = 15000.0f;
+		if (MeleeDashTimer > 0.3f)
+		{
+			bMeleeDash = false;
+			MeleeDashTimer = 0.0f;
+			GetCharacterMovement()->MaxWalkSpeed = Speed;
+		}
+	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("Player Health is %i"), Health);
 
@@ -73,7 +88,7 @@ void APlayerCharacter::Shoot()
 
 		World = GetWorld();
 
-		FVector Location = GetActorLocation() + GetActorForwardVector() * SpawnBuffer;
+		FVector Location = GetActorLocation() + GetActorForwardVector();
 		Location.Z = 10.0f;
 
 		if (World)
@@ -94,6 +109,7 @@ void APlayerCharacter::Melee()
 
 		if (World)
 		{
+			bMeleeDash = true;
 			World->SpawnActor<APlayerMeleeAttack>(PlayerMeleeAttack_BP, GetActorLocation(), FRotator::ZeroRotator);
 		}
 	}
@@ -122,23 +138,34 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	bool bFromSweep, const FHitResult &SweepResult)
 {
 
+	//TODO Putte inn invulnerabilityframes
+	//SetVisibility = true/false;
 	UE_LOG(LogTemp, Warning, TEXT("Player is."));
 
 	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
 	{
 		Health--;
+		StartCameraShake();
 		OtherActor->Destroy();
 	}
 
 	else if (OtherActor->IsA(ACurvingBossBullet::StaticClass()))
 	{
 		Health--;
+		StartCameraShake();
 		OtherActor->Destroy();
 	}
 
 	else if (OtherActor->IsA(AStaticProjectile::StaticClass()))
 	{
 		Health--;
+		StartCameraShake();
+		OtherActor->Destroy();
+	}
+
+	else if (OtherActor->IsA(AP_Up_BulletRain::StaticClass()))
+	{
+		SpawnBulletRain();
 		OtherActor->Destroy();
 	}
 
@@ -147,7 +174,6 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		UE_LOG(LogTemp, Warning, TEXT("Player has died."));
 		//UGameplayStatics::SetGamePaused(GetWorld(), true);
 		bIsDead = true;
-		//OnPlayerDeath.Broadcast();
 	}
 }
 
@@ -173,4 +199,27 @@ void APlayerCharacter::SetPlayerRotation()
 			SetActorRotation(NewDirection.Rotation());
 		}
 	}
+}
+
+void APlayerCharacter::StartCameraShake_Implementation()
+{
+
+}
+
+void APlayerCharacter::SpawnBulletRain()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Bullet Rain"));
+	UWorld * World;
+
+	World = GetWorld();
+
+	for (int y = -Width; y < Width; y += 100)
+	{
+		for(int x = Heigth; x > 1350; x -= 100)
+		{
+			World->SpawnActor<APlayerProjectile>(PlayerProjectile_BP, FVector(x, y, 10.0f), FVector(-1.0f, 0.0f, 0.0f).Rotation());
+		}
+	}
+
+
 }

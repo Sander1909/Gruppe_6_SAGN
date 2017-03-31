@@ -56,7 +56,7 @@ void ACurvingBossBullet::MoveForward(float DeltaTime)
 
 void ACurvingBossBullet::CurveLeft()
 {
-	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 0.5f, 0.0f);
+	FRotator NewRotation = GetActorRotation() + FRotator(0.0f, 0.25f, 0.0f);
 
 	SetActorRotation(NewRotation);
 }
