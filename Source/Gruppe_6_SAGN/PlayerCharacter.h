@@ -59,7 +59,10 @@ public:
 private:
 
 	float SpawnBuffer = 30.0f;
+	float MeleeDashTimer;
+	float Speed = 1000.0f;
 
 	bool bIsDead = false;
+	bool bMeleeDash = false;
 
 };

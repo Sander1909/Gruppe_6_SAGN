@@ -38,7 +38,7 @@ void APlayerCharacter::BeginPlay()
 
 	MyController->bShowMouseCursor = true;
 
-
+	GetCharacterMovement()->MaxWalkSpeed = Speed;
 	
 }
 
@@ -48,6 +48,18 @@ void APlayerCharacter::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	SetPlayerRotation();
+
+	if (bMeleeDash)
+	{
+		MeleeDashTimer += DeltaTime;
+		GetCharacterMovement()->MaxWalkSpeed = 15000.0f;
+		if (MeleeDashTimer > 0.3f)
+		{
+			bMeleeDash = false;
+			MeleeDashTimer = 0.0f;
+			GetCharacterMovement()->MaxWalkSpeed = Speed;
+		}
+	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("Player Health is %i"), Health);
 
@@ -94,6 +106,7 @@ void APlayerCharacter::Melee()
 
 		if (World)
 		{
+			bMeleeDash = true;
 			World->SpawnActor<APlayerMeleeAttack>(PlayerMeleeAttack_BP, GetActorLocation(), FRotator::ZeroRotator);
 		}
 	}
@@ -122,6 +135,8 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	bool bFromSweep, const FHitResult &SweepResult)
 {
 
+	//TODO Putte inn invulnerabilityframes
+	//SetVisibility = true/false;
 	UE_LOG(LogTemp, Warning, TEXT("Player is."));
 
 	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
