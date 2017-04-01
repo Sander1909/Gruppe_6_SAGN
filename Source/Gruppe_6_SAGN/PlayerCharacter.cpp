@@ -95,6 +95,7 @@ void APlayerCharacter::Shoot()
 		{
 			World->SpawnActor<APlayerProjectile>(PlayerProjectile_BP, Location, GetActorRotation());
 		}
+		UGameplayStatics::PlaySound2D(World, OnSpawnProjectileSound,0.1f,1.0f,0.0f);
 	}
 
 }
@@ -137,15 +138,16 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult &SweepResult)
 {
+	
 
 	//TODO Putte inn invulnerabilityframes
 	//SetVisibility = true/false;
-	UE_LOG(LogTemp, Warning, TEXT("Player is."));
 
 	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
 	{
 		Health--;
 		StartCameraShake();
+		UGameplayStatics::PlaySound2D(GetWorld(), OnPlayerHitSound, 0.1f, 1.0f, 0.0f);
 		OtherActor->Destroy();
 	}
 
@@ -153,6 +155,7 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	{
 		Health--;
 		StartCameraShake();
+		UGameplayStatics::PlaySound2D(GetWorld(), OnPlayerHitSound, 0.1f, 1.0f, 0.0f);
 		OtherActor->Destroy();
 	}
 
@@ -160,12 +163,14 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	{
 		Health--;
 		StartCameraShake();
+		UGameplayStatics::PlaySound2D(GetWorld(), OnPlayerHitSound, 0.1f, 1.0f, 0.0f);
 		OtherActor->Destroy();
 	}
 
 	else if (OtherActor->IsA(AP_Up_BulletRain::StaticClass()))
 	{
 		SpawnBulletRain();
+		UGameplayStatics::PlaySound2D(GetWorld(), OnP_UpSound, 0.1f, 1.0f, 0.0f);
 		OtherActor->Destroy();
 	}
 

@@ -60,6 +60,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 		float MaxHealth = 10.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		USoundBase * OnSpawnProjectileSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		USoundBase * OnPlayerHitSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		USoundBase * OnP_UpSound;
+
 private:
 
 	float MeleeDashTimer;
