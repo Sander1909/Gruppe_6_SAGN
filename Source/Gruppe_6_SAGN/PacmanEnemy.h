@@ -27,9 +27,13 @@ public:
 
 	void RotateToPlayer();
 	void SpawnStaticProjectile(float DeltaTime);
+	void SpawnPowerUp();
 
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 		TSubclassOf<class AStaticProjectile> StaticProjectile_BP;
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class AP_Up_BulletRain> P_Up_BulletRain_BP;
 
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
@@ -59,6 +63,10 @@ private:
 	float SwitchMode;
 	float SpawnTimer;
 	
+	int PowerUpRoll = 0;
+	int PowerUpProbability = 70;
+	int MaxPowerUpTypes = 3;
+
 	int Mode1[2] = {3,4};
 	int Mode2[2] = {3,4};
 	int Mode3[2] = {1,2};

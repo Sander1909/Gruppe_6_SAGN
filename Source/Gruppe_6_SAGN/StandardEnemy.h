@@ -25,11 +25,14 @@ public:
 
 	void MoveForward(float DeltaTime);
 	void RotateToPlayer();
-
 	void SpawnProjectile(float DeltaTime);
+	void SpawnPowerUp();
 
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 		TSubclassOf<class AStandardEnemyProjectile> StandardEnemyProjectile_BP;
+
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+		TSubclassOf<class AP_Up_BulletRain> P_Up_BulletRain_BP;
 
 	UFUNCTION()
 		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
@@ -57,6 +60,9 @@ private:
 	float HitByProjectileTimer;
 
 	int EnemyMode = 1;
+	int PowerUpRoll = 0;
+	int PowerUpProbability = 70;
+	int MaxPowerUpTypes = 3;
 
 	//EnemyMode 1: Chase and rotate towards player
 	//EnemyMode 2: Stand still and shoot towards player

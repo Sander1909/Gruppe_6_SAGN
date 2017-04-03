@@ -5,6 +5,7 @@
 #include "StandardEnemyProjectile.h"
 #include "PlayerProjectile.h"
 #include "PlayerMeleeAttack.h"
+#include "P_Up_BulletRain.h"
 
 AStandardEnemy::AStandardEnemy()
 {
@@ -143,6 +144,44 @@ void AStandardEnemy::SpawnProjectile(float DeltaTime)
 
 }
 
+void AStandardEnemy::SpawnPowerUp()
+{
+	UWorld * World;
+
+	World = GetWorld();
+
+	FVector Location = GetActorLocation();
+	Location.Z = 100.0f;
+
+	FRotator P_Up_Rotation = FRotator(45.0f, 45.0f, 45.0f);
+
+	PowerUpRoll = rand() % 100;
+	if (PowerUpRoll > PowerUpProbability)
+	{	
+		MaxPowerUpTypes = rand() % 3;
+		switch (MaxPowerUpTypes)
+		{
+		case 1:
+
+			World->SpawnActor<AP_Up_BulletRain>(P_Up_BulletRain_BP, Location, P_Up_Rotation);
+			break;
+			
+		case 2:
+
+			//Spawn neste PowerUp.
+			break;
+
+		case 3:
+
+			//Spawn neste PowerUp.
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
 void AStandardEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
 	UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult &SweepResult)
@@ -155,6 +194,7 @@ void AStandardEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor 
 
 		if (Health < 1)
 		{
+			SpawnPowerUp();
 			Destroy();
 		}
 

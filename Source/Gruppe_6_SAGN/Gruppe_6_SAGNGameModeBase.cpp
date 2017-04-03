@@ -20,7 +20,7 @@ void AGruppe_6_SAGNGameModeBase::BeginPlay()
 
 	Super::BeginPlay();
 	//Wave 6 gjør at spillet kan testes uten spawning.
-	//WaveNumber = 5;
+	WaveNumber = 4;
 
 }
 
@@ -169,7 +169,7 @@ void AGruppe_6_SAGNGameModeBase::SpawnPacmanEnemy()
 	FVector NewDirection = PlayerLocation - Location;
 
 
-	World->SpawnActor<APacmanEnemy>(PacmanEnemy_BP, Location, NewDirection.Rotation());
+	World->SpawnActor<APacmanEnemy>(PacmanEnemy_BP, Location, FRotator::ZeroRotator);
 }
 
 void AGruppe_6_SAGNGameModeBase::SpawnRandomEnemy()

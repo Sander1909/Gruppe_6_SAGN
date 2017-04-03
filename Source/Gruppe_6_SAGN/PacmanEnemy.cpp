@@ -5,6 +5,7 @@
 #include "StaticProjectile.h"
 #include "PlayerMeleeAttack.h"
 #include "PlayerProjectile.h"
+#include "P_Up_BulletRain.h"
 
 
 // Sets default values
@@ -43,7 +44,7 @@ void APacmanEnemy::Tick(float DeltaTime)
 
 	SpawnStaticProjectile(DeltaTime);
 
-	RotateToPlayer();
+	//RotateToPlayer();
 
 	if (bHitByProjectile)
 	{
@@ -189,9 +190,11 @@ void APacmanEnemy::Tick(float DeltaTime)
 	void APacmanEnemy::MoveUp()
 	{
 		FVector MoveUp = FVector(1.0f, 0.0f, 0.0f);
+		//FRotator LookUp = FRotator(0.0f, 90.0f, 0.0f);
 		if (!bHitByProjectile)
 		{
 			AddMovementInput(MoveUp, MovementValue);
+			SetActorRotation(MoveUp.Rotation());
 		}
 		else
 		{
@@ -206,6 +209,7 @@ void APacmanEnemy::Tick(float DeltaTime)
 		if (!bHitByProjectile)
 		{
 			AddMovementInput(MoveDown, MovementValue);
+			SetActorRotation(MoveDown.Rotation());
 		}
 		else
 		{
@@ -220,6 +224,7 @@ void APacmanEnemy::Tick(float DeltaTime)
 		if (!bHitByProjectile)
 		{
 			AddMovementInput(MoveLeft, MovementValue);
+			SetActorRotation(MoveLeft.Rotation());
 		}
 		else
 		{
@@ -234,6 +239,7 @@ void APacmanEnemy::Tick(float DeltaTime)
 		if (!bHitByProjectile)
 		{
 			AddMovementInput(MoveRight, MovementValue);
+			SetActorRotation(MoveRight.Rotation());
 		}
 		else
 		{
@@ -271,6 +277,44 @@ void APacmanEnemy::Tick(float DeltaTime)
 
 	}
 
+	void APacmanEnemy::SpawnPowerUp()
+	{
+		UWorld * World;
+
+		World = GetWorld();
+
+		FVector Location = GetActorLocation();
+		Location.Z = 100.0f;
+
+		FRotator P_Up_Rotation = FRotator(45.0f, 45.0f, 45.0f);
+
+		PowerUpRoll = rand() % 100;
+		if (PowerUpRoll > PowerUpProbability)
+		{
+			MaxPowerUpTypes = rand() % 3;
+			switch (MaxPowerUpTypes)
+			{
+			case 1:
+				UE_LOG(LogTemp, Warning, TEXT("Spawned a powerup."))
+				World->SpawnActor<AP_Up_BulletRain>(P_Up_BulletRain_BP, Location, P_Up_Rotation);
+				break;
+
+			case 2:
+
+				//Spawn neste PowerUp.
+				break;
+
+			case 3:
+
+				//Spawn neste PowerUp.
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
 	void APacmanEnemy::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor *OtherActor,
 		UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult &SweepResult)
@@ -281,6 +325,7 @@ void APacmanEnemy::Tick(float DeltaTime)
 			bHitByProjectile = true;
 			if (Health < 1)
 			{
+				//SpawnPowerUp();
 				Destroy();
 			}
 			OtherActor->Destroy();
