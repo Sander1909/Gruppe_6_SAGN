@@ -93,6 +93,7 @@ void APlayerCharacter::Shoot()
 
 		if (World)
 		{
+			UGameplayStatics::PlaySound2D(World, OnPlayerShootSound, 0.05f, 1.0f, 0.0f);
 			World->SpawnActor<APlayerProjectile>(PlayerProjectile_BP, Location, GetActorRotation());
 		}
 	}
@@ -145,6 +146,7 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	if (OtherActor->IsA(AStandardEnemyProjectile::StaticClass()))
 	{
 		Health--;
+		UGameplayStatics::PlaySound2D(GetWorld(), OnPlayerHitSound, 0.5f, 1.0f, 0.0f);
 		StartCameraShake();
 		OtherActor->Destroy();
 	}
@@ -152,6 +154,7 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	else if (OtherActor->IsA(ACurvingBossBullet::StaticClass()))
 	{
 		Health--;
+		UGameplayStatics::PlaySound2D(GetWorld(), OnPlayerHitSound, 0.5f, 1.0f, 0.0f);
 		StartCameraShake();
 		OtherActor->Destroy();
 	}
@@ -159,12 +162,14 @@ void APlayerCharacter::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	else if (OtherActor->IsA(AStaticProjectile::StaticClass()))
 	{
 		Health--;
+		UGameplayStatics::PlaySound2D(GetWorld(), OnPlayerHitSound, 0.5f, 1.0f, 0.0f);
 		StartCameraShake();
 		OtherActor->Destroy();
 	}
 
 	else if (OtherActor->IsA(AP_Up_BulletRain::StaticClass()))
 	{
+		UGameplayStatics::PlaySound2D(GetWorld(), OnPowerUpSound, 0.5f, 1.0f, 0.0f);
 		SpawnBulletRain();
 		OtherActor->Destroy();
 	}

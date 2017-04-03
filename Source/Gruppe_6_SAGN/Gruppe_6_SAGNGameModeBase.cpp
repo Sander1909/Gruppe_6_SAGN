@@ -137,6 +137,7 @@ void AGruppe_6_SAGNGameModeBase::Tick(float DeltaTime)
 			UE_LOG(LogTemp, Warning, TEXT("Next Wave had BEGUN!"));
 			WaveTimer = 0.0f;
 			EnemiesSpawned = 0;
+			UGameplayStatics::PlaySound2D(GetWorld(), OnNextWaveSound, 0.5f, 1.0f, 0.0f);
 		}
 	}
 

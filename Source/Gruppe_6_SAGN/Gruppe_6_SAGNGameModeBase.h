@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 		TSubclassOf<class ABossEnemy> BossEnemy_BP;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		USoundBase* OnNextWaveSound;
+
 	void SpawnStandardEnemy();
 	void SpawnPacmanEnemy();
 	void SpawnRandomEnemy();
